@@ -1,10 +1,11 @@
+import express from 'express';
+import bodyParser from 'body-parser';
 import path from 'path';
 import rootDir from './utils/rootDir';
 import adminRoutes from './routes/admin';
 import shopRoutes from './routes/shop';
+import { get404Page } from './controllers/error';
 
-import express from 'express';
-import bodyParser from 'body-parser';
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -24,16 +25,6 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
 // 404 Error
-
-app.use((req, res, next) => {
-	// res.status(404).sendFile(path.join(rootDir, '..', 'views', '404.html'));
-
-	res.status(404).render('404', {
-		pageTitle: '404 Page Not Found',
-		path: null,
-	});
-});
-
-// Alternative
+app.use(get404Page);
 
 app.listen(3000);
