@@ -1,7 +1,6 @@
 import path from 'path';
 import fs, { read } from 'fs';
 import rootDir from '../utils/rootDir';
-import { resolve } from 'dns';
 
 const p = path.join(rootDir, '..', 'data', 'products.json');
 
@@ -16,33 +15,35 @@ export class Product implements ProductInterface {
 		this.title = title;
 	}
 
-	public save() {
-		fs.readFile(p, (err, data) => {
-			products = [];
+	async save() {
+		products = await readFile<Product[]>(p, (err: any, data: Buffer) => {
 			if (!err) {
-				products = JSON.parse(data.toString());
-				console.log(products);
+				return JSON.parse(data.toString());
 			}
-			products.push(this);
-
-			fs.writeFile(p, JSON.stringify(products), err => console.log(err));
+			return [];
 		});
-		// products.push(this);
+
+		products.push(this);
+
+		fs.writeFile(p, JSON.stringify(products), err =>
+			err ? console.log(err) : null
+		);
 	}
 
 	static async fetchAll() {
-		return await readFile(p);
+		return await readFile<Product[]>(p, (err: any, data: Buffer) => {
+			if (err) {
+				return [];
+			}
+			return JSON.parse(data.toString());
+		});
 	}
 }
 
-function readFile(path: string) {
-	return new Promise<Product[]>((res, rej) => {
+function readFile<T>(path: string, cb: Function) {
+	return new Promise<T>((res, rej) => {
 		fs.readFile(path, (err, data) => {
-			if (err) {
-				res([]);
-			}
-
-			res(JSON.parse(data.toString()));
+			res(cb(err, data));
 		});
 	});
 }
