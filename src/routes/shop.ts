@@ -1,9 +1,20 @@
 import { Router } from 'express';
-import { getProducts } from '../controllers/products';
+import {
+	getProducts,
+	getIndexPage,
+	getCart,
+	getCheckoutPage,
+} from '../controllers/shop';
 
 // It acts like mini express App
 const router = Router();
 
-router.get('/', getProducts);
+router.get('/', getIndexPage);
+
+router.get('/products', getProducts);
+
+router.get('/cart', getCart);
+
+router.get('/checkout', getCheckoutPage);
 
 export default router;
