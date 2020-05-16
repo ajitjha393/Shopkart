@@ -22,10 +22,12 @@
 		"ejs": "^3.1.2",
 		"express": "^4.17.1",
 		"express-handlebars": "^3.0.2",
-		"pug": "^2.0.4"
+		"pug": "^2.0.4",
+		"uniqid": "^5.2.0"
 	},
 	"devDependencies": {
 		"@types/express": "^4.17.6",
-		"@types/node": "^13.13.5"
+		"@types/node": "^13.13.5",
+		"@types/uniqid": "^5.2.0"
 	}
 }

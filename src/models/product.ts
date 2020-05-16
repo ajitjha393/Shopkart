@@ -1,10 +1,14 @@
 import path from 'path';
 import fs, { read } from 'fs';
 import rootDir from '../utils/rootDir';
+import uniqid from 'uniqid';
+
+import { readFile } from '../utils/readFile';
 
 const p = path.join(rootDir, '..', 'data', 'products.json');
 
-interface ProductInterface {
+export interface ProductInterface {
+	id: string;
 	title: string;
 	imageUrl: string;
 	description: string;
@@ -13,6 +17,7 @@ interface ProductInterface {
 let products: Product[] = [];
 
 export class Product implements ProductInterface {
+	id: string;
 	title: string;
 	imageUrl: string;
 	description: string;
@@ -28,6 +33,7 @@ export class Product implements ProductInterface {
 		this.imageUrl = imageUrl;
 		this.description = description;
 		this.price = price;
+		this.id = uniqid();
 	}
 
 	async save() {
@@ -53,12 +59,21 @@ export class Product implements ProductInterface {
 			return JSON.parse(data.toString());
 		});
 	}
+
+	static async getProductById(id: string) {
+		try {
+			const products = await this.fetchAll();
+			return products.find(prod => prod.id === id);
+		} catch (err) {
+			console.log(err);
+		}
+	}
 }
 
-function readFile<T>(path: string, cb: Function) {
-	return new Promise<T>((res, rej) => {
-		fs.readFile(path, (err, data) => {
-			res(cb(err, data));
-		});
-	});
-}
+// function readFile<T>(path: string, cb: Function) {
+// 	return new Promise<T>((res, rej) => {
+// 		fs.readFile(path, (err, data) => {
+// 			res(cb(err, data));
+// 		});
+// 	});
+// }
