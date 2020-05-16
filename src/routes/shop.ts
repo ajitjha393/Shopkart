@@ -7,6 +7,7 @@ import {
 	getOrders,
 	getProductDetails,
 	postCart,
+	deleteCartProduct,
 } from '../controllers/shop';
 
 // It acts like mini express App
@@ -19,6 +20,7 @@ router.get('/products/:productId', getProductDetails);
 
 router.get('/cart', getCart);
 router.post('/cart', postCart);
+router.post('/cart-delete-item', deleteCartProduct);
 
 router.get('/orders', getOrders);
 

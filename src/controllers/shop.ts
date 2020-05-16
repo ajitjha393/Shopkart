@@ -35,9 +35,19 @@ export const getProductDetails: RequestHandler = async (req, res, _next) => {
 };
 
 export const getCart: RequestHandler = async (_req, res, _next) => {
+	const cart = await Cart.retrieveCartProducts();
 	const products = await Product.fetchAll();
+	const cartProducts = [];
+
+	for (const product of cart.products) {
+		// const prd = cart.products.find(prod => prod.id === product.id);
+		const prd = products.find(prod => prod.id === product.id);
+
+		cartProducts.push({ productData: prd, qty: product.qty });
+	}
+
 	res.render('shop/cart', {
-		products,
+		products: cartProducts,
 		path: '/cart',
 		pageTitle: 'Your Cart',
 	});
@@ -46,7 +56,14 @@ export const getCart: RequestHandler = async (_req, res, _next) => {
 export const postCart: RequestHandler = async (req, res, _next) => {
 	const prodId = req.body.productId;
 	const product = await Product.getProductById(prodId);
-	Cart.addProduct(prodId, product!.price);
+	await Cart.addProduct(prodId, product!.price);
+	res.redirect('/cart');
+};
+
+export const deleteCartProduct: RequestHandler = async (req, res, _next) => {
+	const prodId = req.body.productId;
+	const reqProduct = (await Product.getProductById(prodId)) as Product;
+	await Cart.deleteProductFromCart(prodId, reqProduct.price);
 	res.redirect('/cart');
 };
 

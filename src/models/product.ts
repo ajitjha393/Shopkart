@@ -1,9 +1,9 @@
 import path from 'path';
-import fs, { read } from 'fs';
 import rootDir from '../utils/rootDir';
 import uniqid from 'uniqid';
 
-import { readFile } from '../utils/readFile';
+import { readFile, writeFile } from '../utils/fileUtility';
+import { Cart } from './cart';
 
 const p = path.join(rootDir, '..', 'data', 'products.json');
 
@@ -24,16 +24,17 @@ export class Product implements ProductInterface {
 	price: number;
 
 	constructor(
+		id: string,
 		title: string,
 		imageUrl: string,
 		description: string,
 		price: number
 	) {
+		this.id = id;
 		this.title = title;
 		this.imageUrl = imageUrl;
 		this.description = description;
 		this.price = price;
-		this.id = uniqid();
 	}
 
 	async save() {
@@ -44,11 +45,22 @@ export class Product implements ProductInterface {
 			return [];
 		});
 
-		products.push(this);
+		// If the product did not existed
+		if (this.id === '') {
+			this.id = uniqid();
 
-		fs.writeFile(p, JSON.stringify(products), err =>
-			err ? console.log(err) : null
-		);
+			products.push(this);
+		} else {
+			const originalProductIndex = products.findIndex(
+				prod => prod.id === this.id
+			);
+
+			products[originalProductIndex] = this;
+		}
+		writeFile<Product[]>(p, products);
+		// fs.writeFile(p, JSON.stringify(products), err =>
+		// 	err ? console.log(err) : null
+		// );
 	}
 
 	static async fetchAll() {
@@ -67,6 +79,14 @@ export class Product implements ProductInterface {
 		} catch (err) {
 			console.log(err);
 		}
+	}
+
+	static async deleteProduct(id: string) {
+		const products = await this.fetchAll();
+		const productIndex = products.findIndex(prod => prod.id === id);
+		Cart.deleteProductFromCart(id, +products[productIndex].price);
+		products.splice(productIndex, 1);
+		writeFile<Product[]>(p, products);
 	}
 }
 

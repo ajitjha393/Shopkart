@@ -3,7 +3,7 @@
 import path from 'path';
 import fs from 'fs';
 import rootDir from '../utils/rootDir';
-import { readFile } from '../utils/readFile';
+import { readFile, writeFile } from '../utils/fileUtility';
 
 const p = path.join(rootDir, '..', 'data', 'cart.json');
 
@@ -41,8 +41,40 @@ export class Cart {
 		}
 
 		cart.totalPrice += +produtPrice;
-		fs.writeFile(p, JSON.stringify(cart), err => {
-			console.log(err);
+		cart.totalPrice = +cart.totalPrice.toFixed(2);
+		writeFile<CartInterface>(p, cart);
+	}
+
+	static async deleteProductFromCart(id: string, price: number) {
+		const cart = await readFile<CartInterface>(
+			p,
+			(err: any, data: Buffer) => {
+				if (!err) {
+					return JSON.parse(data.toString());
+				}
+				return { products: [], totalPrice: 0 };
+			}
+		);
+
+		// Find the product and reduce its quantity by 1 if only 1 qty just delete that obj
+		const productIndex = cart.products.findIndex(prod => prod.id === id);
+
+		const originalProduct = cart.products[productIndex];
+
+		const deductedPrice = +price * originalProduct.qty;
+		cart.totalPrice -= deductedPrice;
+		cart.totalPrice = +cart.totalPrice.toFixed(2);
+
+		cart.products.splice(productIndex, 1);
+		writeFile<CartInterface>(p, cart);
+	}
+
+	static async retrieveCartProducts() {
+		return await readFile<CartInterface>(p, (err: any, data: Buffer) => {
+			if (!err) {
+				return JSON.parse(data.toString());
+			}
+			return { products: [], totalPrice: 0 };
 		});
 	}
 }

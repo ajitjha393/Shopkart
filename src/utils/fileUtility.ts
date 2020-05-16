@@ -7,3 +7,9 @@ export function readFile<T>(path: string, cb: Function) {
 		});
 	});
 }
+
+export function writeFile<T>(p: string, products: T) {
+	fs.writeFile(p, JSON.stringify(products), err =>
+		err ? console.log(err) : null
+	);
+}
