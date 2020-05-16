@@ -12,7 +12,12 @@ export const getAddProduct: RequestHandler = (_req, res, _next) => {
 };
 
 export const postAddProduct: RequestHandler = async (req, res, _next) => {
-	const product = new Product(req.body.title);
+	const product = new Product(
+		req.body.title,
+		req.body.imageUrl,
+		req.body.description,
+		req.body.price
+	);
 	await product.save();
 	res.redirect('/');
 };

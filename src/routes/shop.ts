@@ -4,6 +4,7 @@ import {
 	getIndexPage,
 	getCart,
 	getCheckoutPage,
+	getOrders,
 } from '../controllers/shop';
 
 // It acts like mini express App
@@ -14,6 +15,7 @@ router.get('/', getIndexPage);
 router.get('/products', getProducts);
 
 router.get('/cart', getCart);
+router.get('/orders', getOrders);
 
 router.get('/checkout', getCheckoutPage);
 

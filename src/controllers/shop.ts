@@ -28,6 +28,15 @@ export const getCart: RequestHandler = async (_req, res, _next) => {
 	});
 };
 
+export const getOrders: RequestHandler = async (_req, res, _next) => {
+	const products = await Product.fetchAll();
+	res.render('shop/orders', {
+		products,
+		path: '/orders',
+		pageTitle: 'Your Orders',
+	});
+};
+
 export const getCheckoutPage: RequestHandler = async (_req, res, _next) => {
 	const products = await Product.fetchAll();
 	res.render('shop/index', {
