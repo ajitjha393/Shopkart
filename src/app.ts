@@ -5,6 +5,12 @@ import rootDir from './utils/rootDir';
 import adminRoutes from './routes/admin';
 import shopRoutes from './routes/shop';
 import { get404Page } from './controllers/error';
+import { promisify } from 'util';
+import { ProductInterface } from './models/product';
+import { executeQuery } from './utils/database';
+// import { QueryOptions } from 'mysql2';
+
+// import db from './utils/database';
 
 const app = express();
 

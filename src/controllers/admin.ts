@@ -29,7 +29,7 @@ export const getEditProduct: RequestHandler = async (req, res, _next) => {
 	}
 
 	const prodId = req.params.productId;
-	const product = await Product.getProductById(prodId);
+	const [product] = (await Product.getProductById(prodId)) as Product[];
 
 	if (!product) {
 		return res.redirect('/404');
