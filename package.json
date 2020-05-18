@@ -20,6 +20,7 @@
 		"express": "^4.17.1",
 		"mysql": "^2.18.1",
 		"mysql2": "^2.1.0",
+		"sequelize": "^5.21.9",
 		"uniqid": "^5.2.0"
 	},
 	"devDependencies": {
@@ -28,6 +29,7 @@
 		"@types/mysql": "^2.15.11",
 		"@types/mysql2": "github:types/mysql2",
 		"@types/node": "^13.13.5",
+		"@types/sequelize": "^4.28.9",
 		"@types/uniqid": "^5.2.0"
 	}
 }

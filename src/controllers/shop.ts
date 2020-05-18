@@ -1,9 +1,18 @@
 import { RequestHandler } from 'express';
-import { Product, ProductInterface } from '../models/product';
+import { Product } from '../models/product';
 import { Cart } from '../models/cart';
 
+interface ProductType {
+	id: number;
+	title: string;
+	price: number;
+	description: string;
+	imageUrl: string;
+}
+
 export const getIndexPage: RequestHandler = async (_req, res, _next) => {
-	const products = (await Product.fetchAll()) as ProductInterface[];
+	const products = await Product.findAll();
+
 	res.render('shop/index', {
 		products,
 		path: '/',
@@ -12,7 +21,7 @@ export const getIndexPage: RequestHandler = async (_req, res, _next) => {
 };
 
 export const getProducts: RequestHandler = async (_req, res, _next) => {
-	const products = (await Product.fetchAll()) as ProductInterface[];
+	const products = await Product.findAll();
 	res.render('shop/product-list', {
 		products,
 		path: '/products',
@@ -22,7 +31,7 @@ export const getProducts: RequestHandler = async (_req, res, _next) => {
 
 export const getProductDetails: RequestHandler = async (req, res, _next) => {
 	const prodId = req.params.productId;
-	const [product] = (await Product.getProductById(prodId)) as Product[];
+	const product = await Product.findByPk(prodId);
 	console.log(product);
 	if (!product) {
 		res.redirect('/');
@@ -37,7 +46,7 @@ export const getProductDetails: RequestHandler = async (req, res, _next) => {
 
 export const getCart: RequestHandler = async (_req, res, _next) => {
 	const cart = await Cart.retrieveCartProducts();
-	const products = (await Product.fetchAll()) as ProductInterface[];
+	const products = await Product.findAll();
 	console.log(products, '----------');
 	const cartProducts = [];
 
@@ -58,20 +67,20 @@ export const getCart: RequestHandler = async (_req, res, _next) => {
 
 export const postCart: RequestHandler = async (req, res, _next) => {
 	const prodId = req.body.productId;
-	const [product] = (await Product.getProductById(prodId)) as Product[];
+	const product = await Product.findByPk(prodId);
 	await Cart.addProduct(prodId, product!.price);
 	res.redirect('/cart');
 };
 
 export const deleteCartProduct: RequestHandler = async (req, res, _next) => {
 	const prodId = req.body.productId;
-	const [reqProduct] = (await Product.getProductById(prodId)) as Product[];
-	await Cart.deleteProductFromCart(prodId, reqProduct.price);
+	const reqProduct = await Product.findByPk(prodId);
+	await Cart.deleteProductFromCart(prodId, reqProduct!.price);
 	res.redirect('/cart');
 };
 
 export const getOrders: RequestHandler = async (_req, res, _next) => {
-	const products = (await Product.fetchAll()) as ProductInterface[];
+	const products = await Product.findAll();
 	res.render('shop/orders', {
 		products,
 		path: '/orders',
@@ -80,7 +89,7 @@ export const getOrders: RequestHandler = async (_req, res, _next) => {
 };
 
 export const getCheckoutPage: RequestHandler = async (_req, res, _next) => {
-	const products = (await Product.fetchAll()) as ProductInterface[];
+	const products = await Product.findAll();
 	res.render('shop/index', {
 		products,
 		path: '/checkout',

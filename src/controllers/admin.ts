@@ -10,14 +10,18 @@ export const getAddProduct: RequestHandler = (_req, res, _next) => {
 };
 
 export const postAddProduct: RequestHandler = async (req, res, _next) => {
-	const product = new Product(
-		'',
-		req.body.title,
-		req.body.imageUrl,
-		req.body.description,
-		req.body.price
-	);
-	await product.save();
+	try {
+		await Product.create({
+			title: req.body.title,
+			price: req.body.price,
+			imageUrl: req.body.imageUrl,
+			description: req.body.description,
+		});
+
+		console.log('Product Created....');
+	} catch (err) {
+		console.log(err);
+	}
 	res.redirect('/');
 };
 
@@ -28,8 +32,8 @@ export const getEditProduct: RequestHandler = async (req, res, _next) => {
 		return res.redirect('/');
 	}
 
-	const prodId = req.params.productId;
-	const [product] = (await Product.getProductById(prodId)) as Product[];
+	const prodId = +req.params.productId;
+	const product = await Product.findByPk(prodId);
 
 	if (!product) {
 		return res.redirect('/404');
@@ -44,20 +48,23 @@ export const getEditProduct: RequestHandler = async (req, res, _next) => {
 };
 
 export const postEditProduct: RequestHandler = async (req, res, _next) => {
-	const newProduct = new Product(
-		req.body.productId,
-		req.body.title,
-		req.body.imageUrl,
-		req.body.description,
-		req.body.price
-	);
-	await newProduct.save();
+	const updatedProduct = {
+		title: req.body.title,
+		imageUrl: req.body.imageUrl,
+		description: req.body.description,
+		price: +req.body.price,
+	};
+	await Product.update(updatedProduct, {
+		where: {
+			id: +req.body.productId,
+		},
+	});
 
 	res.redirect('/admin/products');
 };
 
 export const getProducts: RequestHandler = async (_req, res, _next) => {
-	const products = await Product.fetchAll();
+	const products = await Product.findAll();
 	res.render('admin/products', {
 		products,
 		path: '/admin/products',
@@ -66,9 +73,12 @@ export const getProducts: RequestHandler = async (_req, res, _next) => {
 };
 
 export const deleteProduct: RequestHandler = async (req, res, _next) => {
-	const prodId = req.body.productId;
+	const prodId = +req.body.productId;
 
-	await Product.deleteProduct(prodId);
-
+	await Product.destroy({
+		where: {
+			id: prodId,
+		},
+	});
 	res.redirect('/admin/products');
 };

@@ -1,16 +1,26 @@
-import mysql from 'mysql2';
-import { promisify } from 'util';
+import { Sequelize } from 'sequelize';
 
-const pool = mysql.createPool({
+const sequelize = new Sequelize('node-test', 'root', 'password', {
+	dialect: 'mysql',
 	host: 'localhost',
-	user: 'root',
-	password: 'password',
-	database: 'node-test',
 });
 
-const executeQuery = promisify(pool.execute).bind(pool);
+export { sequelize };
 
-// const promiseQuery = promisify(pool.query).bind(pool);
-// const promisePoolEnd = promisify(pool.end).bind(pool);
+// import mysql from 'mysql2';
+// import sequelize from 'sequelize'
+// import { promisify } from 'util';
 
-export { executeQuery };
+// const pool = mysql.createPool({
+// 	host: 'localhost',
+// 	user: 'root',
+// 	password: 'password',
+// 	database: 'node-test',
+// });
+
+// const executeQuery = promisify(pool.execute).bind(pool);
+
+// // const promiseQuery = promisify(pool.query).bind(pool);
+// // const promisePoolEnd = promisify(pool.end).bind(pool);
+
+// export { executeQuery };

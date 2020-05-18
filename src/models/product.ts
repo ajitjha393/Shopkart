@@ -1,77 +1,48 @@
-import { executeQuery } from '../utils/database';
-import { getProducts } from '../controllers/admin';
+import { DataTypes, Model } from 'sequelize';
 
-export interface ProductInterface {
-	id: string;
-	title: string;
-	imageUrl: string;
-	description: string;
-	price: number;
+import { sequelize } from '../utils/database';
+
+class Product extends Model {
+	public id!: number;
+	public title!: string;
+	public price!: number;
+	public imageUrl!: string;
+	public description!: string;
+
+	public readonly createdAt!: Date;
+	public readonly updatedAt!: Date;
 }
-let products: Product[] = [];
 
-export class Product implements ProductInterface {
-	id: string;
-	title: string;
-	imageUrl: string;
-	description: string;
-	price: number;
+Product.init(
+	{
+		id: {
+			type: DataTypes.INTEGER,
+			autoIncrement: true,
+			allowNull: false,
+			primaryKey: true,
+		},
 
-	constructor(
-		id: string,
-		title: string,
-		imageUrl: string,
-		description: string,
-		price: number
-	) {
-		this.id = id;
-		this.title = title;
-		this.imageUrl = imageUrl;
-		this.description = description;
-		this.price = price;
-	}
+		title: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
 
-	async save() {
-		if (this.id === '') {
-			return executeQuery({
-				sql: `insert into Products(title,price,description,imageurl) values(?,?,?,?)`,
-				values: [
-					this.title,
-					this.price,
-					this.description,
-					this.imageUrl,
-				],
-			});
-		}
+		price: {
+			type: DataTypes.DOUBLE(undefined, 2),
+			allowNull: false,
+		},
 
-		return executeQuery({
-			sql:
-				'UPDATE Products SET title = ? , price = ? , description = ? , imageUrl = ? where id = ?',
-			values: [
-				this.title,
-				this.price,
-				this.description,
-				this.imageUrl,
-				+this.id,
-			],
-		});
-	}
+		imageUrl: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
 
-	static fetchAll() {
-		return executeQuery({ sql: 'SELECT * FROM Products' });
-	}
+		description: {
+			type: DataTypes.TEXT,
+			allowNull: false,
+		},
+	},
+	{ sequelize, modelName: 'product' }
+);
 
-	static getProductById(id: string) {
-		return executeQuery({
-			sql: 'Select * from Products where id = ?',
-			values: [id],
-		});
-	}
-
-	static async deleteProduct(id: string) {
-		return executeQuery({
-			sql: 'Delete from Products where id = ?',
-			values: [+id],
-		});
-	}
-}
+export { Product };
