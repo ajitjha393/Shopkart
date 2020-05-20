@@ -1,7 +1,6 @@
 import { RequestHandler } from 'express';
 import { Product } from '../models/product';
 
-
 export const getAddProduct: RequestHandler = (_req, res, _next) => {
 	res.render('admin/edit-product', {
 		pageTitle: 'Add Product',
@@ -12,7 +11,7 @@ export const getAddProduct: RequestHandler = (_req, res, _next) => {
 
 export const postAddProduct: RequestHandler = async (req, res, _next) => {
 	try {
-		(req as any).user.createProduct({
+		req.user.createProduct({
 			title: req.body.title,
 			price: req.body.price,
 			imageUrl: req.body.imageUrl,
@@ -36,7 +35,7 @@ export const getEditProduct: RequestHandler = async (req, res, _next) => {
 	const prodId = +req.params.productId;
 	// const product = await Product.findByPk(prodId);
 
-	const [product] = await (<any>req).user.getProducts({
+	const [product] = await req.user.getProducts({
 		where: { id: prodId },
 	});
 
@@ -69,7 +68,7 @@ export const postEditProduct: RequestHandler = async (req, res, _next) => {
 };
 
 export const getProducts: RequestHandler = async (req, res, _next) => {
-	const products = await (<any>req).user.getProducts();
+	const products = await req.user.getProducts();
 	res.render('admin/products', {
 		products,
 		path: '/admin/products',

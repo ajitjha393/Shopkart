@@ -10,6 +10,8 @@ import { Product } from './models/product';
 import { User } from './models/user';
 import { Cart } from './models/cart';
 import { CartItem } from './models/cart-item';
+import { Order } from './models/order';
+import { OrderItem } from './models/order-item';
 
 const app = express();
 
@@ -26,7 +28,8 @@ app.use(
 app.use(express.static(path.join(rootDir, '..', 'public')));
 
 app.use(async (req, _res, next) => {
-	(req as any).user = await User.findByPk(1);
+	// (req as any).user = await User.findByPk(1);
+	req.user = await User.findByPk(1);
 	next();
 });
 
@@ -53,6 +56,19 @@ app.use(get404Page);
 	});
 	Product.belongsToMany(Cart, {
 		through: CartItem,
+	});
+
+	// User-Order 1-M , 1-1
+	User.hasMany(Order);
+	Order.belongsTo(User);
+
+	// Product-Order 1-M , M-1 => M-M
+
+	Product.belongsToMany(Order, {
+		through: OrderItem,
+	});
+	Order.belongsToMany(Product, {
+		through: OrderItem,
 	});
 
 	try {

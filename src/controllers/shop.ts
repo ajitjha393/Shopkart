@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import { Product } from '../models/product';
-import { Cart } from '../models/cart';
+// import { Order } from '../models/order';
 
 interface ProductType {
 	id: number;
@@ -45,7 +45,7 @@ export const getProductDetails: RequestHandler = async (req, res, _next) => {
 };
 
 export const getCart: RequestHandler = async (req, res, _next) => {
-	const cart = await (<any>req).user.getCart();
+	const cart = await req.user.getCart();
 	console.log(cart);
 	const cartProducts = await cart.getProducts();
 
@@ -58,7 +58,7 @@ export const getCart: RequestHandler = async (req, res, _next) => {
 
 export const postCart: RequestHandler = async (req, res, _next) => {
 	const prodId = req.body.productId;
-	const cart = await (<any>req).user.getCart();
+	const cart = await req.user.getCart();
 	let [product] = await cart.getProducts({
 		where: { id: prodId },
 	});
@@ -83,7 +83,7 @@ export const postCart: RequestHandler = async (req, res, _next) => {
 
 export const deleteCartProduct: RequestHandler = async (req, res, _next) => {
 	const prodId = req.body.productId;
-	const cart = await (<any>req).user.getCart();
+	const cart = await req.user.getCart();
 	let [product] = await cart.getProducts({
 		where: { id: prodId },
 	});
@@ -92,13 +92,36 @@ export const deleteCartProduct: RequestHandler = async (req, res, _next) => {
 	res.redirect('/cart');
 };
 
-export const getOrders: RequestHandler = async (_req, res, _next) => {
-	const products = await Product.findAll();
+export const getOrders: RequestHandler = async (req, res, _next) => {
+	const orders = await req.user.getOrders({ include: ['products'] });
+
+	console.log(orders);
+
 	res.render('shop/orders', {
-		products,
+		orders,
 		path: '/orders',
 		pageTitle: 'Your Orders',
 	});
+};
+
+export const postOrder: RequestHandler = async (req, res, _next) => {
+	const cart = await req.user.getCart();
+	const products = (await cart.getProducts()) as any[];
+
+	const order = await req.user.createOrder();
+
+	await order.addProducts(
+		products.map(product => {
+			product.orderItem = {
+				quantity: product.cartItem.quantity,
+			};
+			return product;
+		})
+	);
+
+	await cart.setProducts(null);
+
+	res.redirect('/orders');
 };
 
 export const getCheckoutPage: RequestHandler = async (_req, res, _next) => {
