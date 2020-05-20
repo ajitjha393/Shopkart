@@ -2,13 +2,13 @@ import { DataTypes, Model } from 'sequelize';
 
 import { sequelize } from '../utils/database';
 
-class Cart extends Model {
-	public id!: number;
+class CartItem extends Model {
+	public id!: Number;
 	public readonly createdAt!: Date;
 	public readonly updatedAt!: Date;
 }
 
-Cart.init(
+CartItem.init(
 	{
 		id: {
 			type: DataTypes.INTEGER,
@@ -16,8 +16,13 @@ Cart.init(
 			allowNull: false,
 			primaryKey: true,
 		},
+
+		quantity: {
+			type: DataTypes.INTEGER,
+			// allowNull: false,
+		},
 	},
-	{ sequelize, modelName: 'cart' }
+	{ sequelize, modelName: 'cartItem' }
 );
 
-export { Cart };
+export { CartItem };

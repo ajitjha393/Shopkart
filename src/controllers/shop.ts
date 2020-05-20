@@ -44,19 +44,10 @@ export const getProductDetails: RequestHandler = async (req, res, _next) => {
 	}
 };
 
-export const getCart: RequestHandler = async (_req, res, _next) => {
-	const cart = await Cart.retrieveCartProducts();
-	const products = await Product.findAll();
-	console.log(products, '----------');
-	const cartProducts = [];
-
-	for (const product of cart.products) {
-		const prd = products.find(prod => +prod.id === +product.id);
-
-		cartProducts.push({ productData: prd, qty: product.qty });
-	}
-
-	console.log(cartProducts);
+export const getCart: RequestHandler = async (req, res, _next) => {
+	const cart = await (<any>req).user.getCart();
+	console.log(cart);
+	const cartProducts = await cart.getProducts();
 
 	res.render('shop/cart', {
 		products: cartProducts,
@@ -67,15 +58,37 @@ export const getCart: RequestHandler = async (_req, res, _next) => {
 
 export const postCart: RequestHandler = async (req, res, _next) => {
 	const prodId = req.body.productId;
-	const product = await Product.findByPk(prodId);
-	await Cart.addProduct(prodId, product!.price);
+	const cart = await (<any>req).user.getCart();
+	let [product] = await cart.getProducts({
+		where: { id: prodId },
+	});
+
+	let newQuantity = 1;
+	if (product) {
+		// If the product exist in the cart
+		const oldQuantity = product.cartItem.quantity;
+		newQuantity = oldQuantity + 1;
+	} else {
+		product = await Product.findByPk(prodId);
+		// await cart.addProduct(productToBeAdded);
+	}
+
+	await cart.addProduct(product, {
+		through: {
+			quantity: newQuantity,
+		},
+	});
 	res.redirect('/cart');
 };
 
 export const deleteCartProduct: RequestHandler = async (req, res, _next) => {
 	const prodId = req.body.productId;
-	const reqProduct = await Product.findByPk(prodId);
-	await Cart.deleteProductFromCart(prodId, reqProduct!.price);
+	const cart = await (<any>req).user.getCart();
+	let [product] = await cart.getProducts({
+		where: { id: prodId },
+	});
+
+	await product.cartItem.destroy();
 	res.redirect('/cart');
 };
 
