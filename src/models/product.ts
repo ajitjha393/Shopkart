@@ -26,4 +26,17 @@ export class Product {
 			.find({ _id: new ObjectId(productId) })
 			.next();
 	}
+	static updateById(productId: string, updatedProduct: Product) {
+		const db = getDb();
+		return db
+			.collection('products')
+			.replaceOne({ _id: new ObjectId(productId) }, updatedProduct);
+	}
+
+	static deleteById(productId: string) {
+		const db = getDb();
+		return db
+			.collection('products')
+			.deleteOne({ _id: new ObjectId(productId) });
+	}
 }
