@@ -16,6 +16,24 @@ export class User {
 		return db.collection('users').insertOne(this);
 	}
 
+	async getCart() {
+		const productIds = this.cart.items.map(item => item.productId);
+
+		const db = getDb();
+		const cartProducts = await db
+			.collection('products')
+			.find({ _id: { $in: productIds } })
+			.toArray();
+		return cartProducts.map(p => ({
+			...p,
+			quantity: this.cart.items.find(
+				i => i.productId.toString() === p._id.toString()
+			).quantity,
+		}));
+
+		// return this.cart;
+	}
+
 	addToCart(product: ProductType, userId: ObjectId) {
 		const cartProductIndex = this.cart.items.findIndex(cp => {
 			return cp.productId.toString() == product._id.toString();

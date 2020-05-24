@@ -37,17 +37,15 @@ export const getProductDetails: RequestHandler = async (req, res, _next) => {
 	}
 };
 
-// export const getCart: RequestHandler = async (req, res, _next) => {
-// 	const cart = await req.user.getCart();
-// 	console.log(cart);
-// 	const cartProducts = await cart.getProducts();
+export const getCart: RequestHandler = async (req, res, _next) => {
+	const cartProducts = await req.user.getCart();
 
-// 	res.render('shop/cart', {
-// 		products: cartProducts,
-// 		path: '/cart',
-// 		pageTitle: 'Your Cart',
-// 	});
-// };
+	res.render('shop/cart', {
+		products: cartProducts,
+		path: '/cart',
+		pageTitle: 'Your Cart',
+	});
+};
 
 export const postCart: RequestHandler = async (req, res, _next) => {
 	const prodId = req.body.productId;
@@ -56,27 +54,6 @@ export const postCart: RequestHandler = async (req, res, _next) => {
 	if (product) {
 		await req.user.addToCart(product, req.user._id);
 	}
-
-	// const cart = await req.user.getCart();
-	// let [product] = await cart.getProducts({
-	// 	where: { id: prodId },
-	// });
-
-	// let newQuantity = 1;
-	// if (product) {
-	// 	// If the product exist in the cart
-	// 	const oldQuantity = product.cartItem.quantity;
-	// 	newQuantity = oldQuantity + 1;
-	// } else {
-	// 	product = await Product.findByPk(prodId);
-	// 	// await cart.addProduct(productToBeAdded);
-	// }
-
-	// await cart.addProduct(product, {
-	// 	through: {
-	// 		quantity: newQuantity,
-	// 	},
-	// });
 	res.redirect('/cart');
 };
 
