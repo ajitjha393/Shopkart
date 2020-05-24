@@ -2,7 +2,6 @@ import { RequestHandler } from 'express';
 import { Product } from '../models/product';
 // import { Order } from '../models/order';
 
-
 export const getIndexPage: RequestHandler = async (_req, res, _next) => {
 	const products = await Product.fetchAll();
 
@@ -53,6 +52,7 @@ export const getProductDetails: RequestHandler = async (req, res, _next) => {
 export const postCart: RequestHandler = async (req, res, _next) => {
 	const prodId = req.body.productId;
 	const product = await Product.findById(prodId);
+
 	if (product) {
 		await req.user.addToCart(product, req.user._id);
 	}
