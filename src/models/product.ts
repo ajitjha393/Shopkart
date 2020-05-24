@@ -1,48 +1,29 @@
-import { DataTypes, Model } from 'sequelize';
+import { getDb } from '../utils/database';
+import { ObjectId } from 'mongodb';
 
-import { sequelize } from '../utils/database';
+export class Product {
+	constructor(
+		public title: string,
+		public description: string,
+		public price: number,
+		public imageUrl: string
+	) {}
 
-class Product extends Model {
-	public id!: number;
-	public title!: string;
-	public price!: number;
-	public imageUrl!: string;
-	public description!: string;
+	save() {
+		const db = getDb();
+		return db.collection('products').insertOne(this);
+	}
 
-	public readonly createdAt!: Date;
-	public readonly updatedAt!: Date;
+	static fetchAll() {
+		const db = getDb();
+		return db.collection('products').find().toArray();
+	}
+
+	static findById(productId: string) {
+		const db = getDb();
+		return db
+			.collection('products')
+			.find({ _id: new ObjectId(productId) })
+			.next();
+	}
 }
-
-Product.init(
-	{
-		id: {
-			type: DataTypes.INTEGER,
-			autoIncrement: true,
-			allowNull: false,
-			primaryKey: true,
-		},
-
-		title: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-
-		price: {
-			type: DataTypes.DOUBLE(undefined, 2),
-			allowNull: false,
-		},
-
-		imageUrl: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-
-		description: {
-			type: DataTypes.TEXT,
-			allowNull: false,
-		},
-	},
-	{ sequelize, modelName: 'product' }
-);
-
-export { Product };
