@@ -1,39 +1,16 @@
-import { DataTypes, Model, HasManyCreateAssociationMixin } from 'sequelize';
+import { getDb } from '../utils/database';
+import { ObjectId } from 'mongodb';
 
-import { sequelize } from '../utils/database';
-import { Cart } from './cart';
+export class User {
+	constructor(public name: string, public email: string) {}
 
-class User extends Model {
-	public id!: number;
-	public name!: string;
-	public email!: string;
+	save() {
+		const db = getDb();
+		return db.collection('users').insertOne(this);
+	}
 
-	public readonly createdAt!: Date;
-	public readonly updatedAt!: Date;
-
-	public createCart!: HasManyCreateAssociationMixin<Cart>;
+	static findById(userId: string) {
+		const db = getDb();
+		return db.collection('users').findOne({ _id: new ObjectId(userId) });
+	}
 }
-
-User.init(
-	{
-		id: {
-			type: DataTypes.INTEGER,
-			autoIncrement: true,
-			allowNull: false,
-			primaryKey: true,
-		},
-
-		name: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-
-		email: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-	},
-	{ sequelize, modelName: 'user' }
-);
-
-export { User };
