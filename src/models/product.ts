@@ -6,7 +6,8 @@ export class Product {
 		public title: string,
 		public description: string,
 		public price: number,
-		public imageUrl: string
+		public imageUrl: string,
+		public userId: string
 	) {}
 
 	save() {

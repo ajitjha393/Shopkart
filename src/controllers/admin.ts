@@ -15,7 +15,8 @@ export const postAddProduct: RequestHandler = async (req, res, _next) => {
 			req.body.title,
 			req.body.description,
 			+req.body.price,
-			req.body.imageUrl
+			req.body.imageUrl,
+			req.user._id
 		);
 
 		const res = await product.save();
@@ -53,7 +54,8 @@ export const postEditProduct: RequestHandler = async (req, res, _next) => {
 		req.body.title,
 		req.body.description,
 		+req.body.price,
-		req.body.imageUrl
+		req.body.imageUrl,
+		req.user._id
 	);
 
 	await Product.updateById(req.body.productId, updatedProduct);
