@@ -87,7 +87,30 @@ export class User {
 
 	async addOrder(userId: ObjectId) {
 		const db = getDb();
-		await db.collection('orders').insertOne(this.cart);
+		const cartProducts = await this.getCart();
+
+		const order = {
+			items: cartProducts,
+			user: {
+				_id: userId,
+				name: this.name,
+				email: this.email,
+			},
+		};
+
+		await db.collection('orders').insertOne(order);
+		this.cart = { items: [] };
+		await db.collection('users').updateOne(
+			{ _id: userId },
+			{
+				$set: { cart: { items: [] } },
+			}
+		);
+	}
+
+	async getOrders(userId: ObjectId) {
+		const db = getDb();
+		await db.collection('orders').find().toArray;
 		this.cart = { items: [] };
 		await db.collection('users').updateOne(
 			{ _id: userId },
