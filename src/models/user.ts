@@ -108,15 +108,8 @@ export class User {
 		);
 	}
 
-	async getOrders(userId: ObjectId) {
+	getOrders(userId: ObjectId) {
 		const db = getDb();
-		await db.collection('orders').find().toArray;
-		this.cart = { items: [] };
-		await db.collection('users').updateOne(
-			{ _id: userId },
-			{
-				$set: { cart: { items: [] } },
-			}
-		);
+		return db.collection('orders').find({ 'user._id': userId }).toArray();
 	}
 }

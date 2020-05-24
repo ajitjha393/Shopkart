@@ -64,17 +64,15 @@ export const deleteCartProduct: RequestHandler = async (req, res, _next) => {
 	res.redirect('/cart');
 };
 
-// export const getOrders: RequestHandler = async (req, res, _next) => {
-// 	const orders = await req.user.getOrders({ include: ['products'] });
+export const getOrders: RequestHandler = async (req, res, _next) => {
+	const orders = await req.user.getOrders(req.user._id);
 
-// 	console.log(orders);
-
-// 	res.render('shop/orders', {
-// 		orders,
-// 		path: '/orders',
-// 		pageTitle: 'Your Orders',
-// 	});
-// };
+	res.render('shop/orders', {
+		orders,
+		path: '/orders',
+		pageTitle: 'Your Orders',
+	});
+};
 
 export const postOrder: RequestHandler = async (req, res, _next) => {
 	await req.user.addOrder(req.user._id);
