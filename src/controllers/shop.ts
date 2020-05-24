@@ -2,13 +2,6 @@ import { RequestHandler } from 'express';
 import { Product } from '../models/product';
 // import { Order } from '../models/order';
 
-interface ProductType {
-	id: number;
-	title: string;
-	price: number;
-	description: string;
-	imageUrl: string;
-}
 
 export const getIndexPage: RequestHandler = async (_req, res, _next) => {
 	const products = await Product.fetchAll();
@@ -57,30 +50,35 @@ export const getProductDetails: RequestHandler = async (req, res, _next) => {
 // 	});
 // };
 
-// export const postCart: RequestHandler = async (req, res, _next) => {
-// 	const prodId = req.body.productId;
-// 	const cart = await req.user.getCart();
-// 	let [product] = await cart.getProducts({
-// 		where: { id: prodId },
-// 	});
+export const postCart: RequestHandler = async (req, res, _next) => {
+	const prodId = req.body.productId;
+	const product = await Product.findById(prodId);
+	if (product) {
+		await req.user.addToCart(product, req.user._id);
+	}
 
-// 	let newQuantity = 1;
-// 	if (product) {
-// 		// If the product exist in the cart
-// 		const oldQuantity = product.cartItem.quantity;
-// 		newQuantity = oldQuantity + 1;
-// 	} else {
-// 		product = await Product.findByPk(prodId);
-// 		// await cart.addProduct(productToBeAdded);
-// 	}
+	// const cart = await req.user.getCart();
+	// let [product] = await cart.getProducts({
+	// 	where: { id: prodId },
+	// });
 
-// 	await cart.addProduct(product, {
-// 		through: {
-// 			quantity: newQuantity,
-// 		},
-// 	});
-// 	res.redirect('/cart');
-// };
+	// let newQuantity = 1;
+	// if (product) {
+	// 	// If the product exist in the cart
+	// 	const oldQuantity = product.cartItem.quantity;
+	// 	newQuantity = oldQuantity + 1;
+	// } else {
+	// 	product = await Product.findByPk(prodId);
+	// 	// await cart.addProduct(productToBeAdded);
+	// }
+
+	// await cart.addProduct(product, {
+	// 	through: {
+	// 		quantity: newQuantity,
+	// 	},
+	// });
+	res.redirect('/cart');
+};
 
 // export const deleteCartProduct: RequestHandler = async (req, res, _next) => {
 // 	const prodId = req.body.productId;
