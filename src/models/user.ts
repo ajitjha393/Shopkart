@@ -34,6 +34,20 @@ export class User {
 		// return this.cart;
 	}
 
+	deleteFromCart(productId: ObjectId, userId: ObjectId) {
+		const updatedCartItems = this.cart.items.filter(
+			item => item.productId.toString() !== productId.toString()
+		);
+
+		const db = getDb();
+		return db.collection('users').updateOne(
+			{ _id: userId },
+			{
+				$set: { cart: { items: updatedCartItems } },
+			}
+		);
+	}
+
 	addToCart(product: ProductType, userId: ObjectId) {
 		const cartProductIndex = this.cart.items.findIndex(cp => {
 			return cp.productId.toString() == product._id.toString();
@@ -69,5 +83,17 @@ export class User {
 	static findById(userId: string) {
 		const db = getDb();
 		return db.collection('users').findOne({ _id: new ObjectId(userId) });
+	}
+
+	async addOrder(userId: ObjectId) {
+		const db = getDb();
+		await db.collection('orders').insertOne(this.cart);
+		this.cart = { items: [] };
+		await db.collection('users').updateOne(
+			{ _id: userId },
+			{
+				$set: { cart: { items: [] } },
+			}
+		);
 	}
 }

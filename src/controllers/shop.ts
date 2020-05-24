@@ -57,16 +57,12 @@ export const postCart: RequestHandler = async (req, res, _next) => {
 	res.redirect('/cart');
 };
 
-// export const deleteCartProduct: RequestHandler = async (req, res, _next) => {
-// 	const prodId = req.body.productId;
-// 	const cart = await req.user.getCart();
-// 	let [product] = await cart.getProducts({
-// 		where: { id: prodId },
-// 	});
-
-// 	await product.cartItem.destroy();
-// 	res.redirect('/cart');
-// };
+export const deleteCartProduct: RequestHandler = async (req, res, _next) => {
+	const prodId = req.body.productId;
+	await req.user.deleteFromCart(prodId, req.user._id);
+	console.log('Deleted From Cart....');
+	res.redirect('/cart');
+};
 
 // export const getOrders: RequestHandler = async (req, res, _next) => {
 // 	const orders = await req.user.getOrders({ include: ['products'] });
@@ -80,25 +76,10 @@ export const postCart: RequestHandler = async (req, res, _next) => {
 // 	});
 // };
 
-// export const postOrder: RequestHandler = async (req, res, _next) => {
-// 	const cart = await req.user.getCart();
-// 	const products = (await cart.getProducts()) as any[];
-
-// 	const order = await req.user.createOrder();
-
-// 	await order.addProducts(
-// 		products.map(product => {
-// 			product.orderItem = {
-// 				quantity: product.cartItem.quantity,
-// 			};
-// 			return product;
-// 		})
-// 	);
-
-// 	await cart.setProducts(null);
-
-// 	res.redirect('/orders');
-// };
+export const postOrder: RequestHandler = async (req, res, _next) => {
+	await req.user.addOrder(req.user._id);
+	res.redirect('/orders');
+};
 
 // export const getCheckoutPage: RequestHandler = async (_req, res, _next) => {
 // 	const products = await Product.findAll();
