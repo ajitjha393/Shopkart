@@ -1,28 +1,28 @@
-import { DataTypes, Model } from 'sequelize';
+// import { DataTypes, Model } from 'sequelize';
 
-import { sequelize } from '../utils/database';
+// import { sequelize } from '../utils/database';
 
-class OrderItem extends Model {
-	public id!: Number;
-	public readonly createdAt!: Date;
-	public readonly updatedAt!: Date;
-}
+// class OrderItem extends Model {
+// 	public id!: Number;
+// 	public readonly createdAt!: Date;
+// 	public readonly updatedAt!: Date;
+// }
 
-OrderItem.init(
-	{
-		id: {
-			type: DataTypes.INTEGER,
-			autoIncrement: true,
-			allowNull: false,
-			primaryKey: true,
-		},
+// OrderItem.init(
+// 	{
+// 		id: {
+// 			type: DataTypes.INTEGER,
+// 			autoIncrement: true,
+// 			allowNull: false,
+// 			primaryKey: true,
+// 		},
 
-		quantity: {
-			type: DataTypes.INTEGER,
-			// allowNull: false,
-		},
-	},
-	{ sequelize, modelName: 'orderItem' }
-);
+// 		quantity: {
+// 			type: DataTypes.INTEGER,
+// 			// allowNull: false,
+// 		},
+// 	},
+// 	{ sequelize, modelName: 'orderItem' }
+// );
 
-export { OrderItem };
+// export { OrderItem };
