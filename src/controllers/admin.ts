@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
 import Product from '../models/product';
+import { ObjectId } from 'mongodb';
 
 export const getAddProduct: RequestHandler = (_req, res, _next) => {
 	res.render('admin/edit-product', {
@@ -26,53 +27,55 @@ export const postAddProduct: RequestHandler = async (req, res, _next) => {
 	res.redirect('/');
 };
 
-// export const getEditProduct: RequestHandler = async (req, res, _next) => {
-// 	const editMode = req.query.edit;
+export const getEditProduct: RequestHandler = async (req, res, _next) => {
+	const editMode = req.query.edit;
 
-// 	if (!editMode) {
-// 		return res.redirect('/');
-// 	}
+	if (!editMode) {
+		return res.redirect('/');
+	}
 
-// 	const prodId = req.params.productId;
-// 	const product = await Product.findById(prodId);
+	const prodId = req.params.productId;
+	const product = await Product.findById(prodId);
+	console.log('Edit Mode');
+	if (!product) {
+		return res.redirect('/404');
+	}
 
-// 	if (!product) {
-// 		return res.redirect('/404');
-// 	}
+	res.render('admin/edit-product', {
+		pageTitle: 'Edit Product',
+		path: '/admin/edit-product',
+		editing: editMode,
+		product,
+	});
+};
 
-// 	res.render('admin/edit-product', {
-// 		pageTitle: 'Edit Product',
-// 		path: '/admin/edit-product',
-// 		editing: editMode,
-// 		product,
-// 	});
-// };
+export const postEditProduct: RequestHandler = async (req, res, _next) => {
+	const updatedProduct = {
+		title: req.body.title,
+		description: req.body.description,
+		price: +req.body.price,
+		imageUrl: req.body.imageUrl,
+	};
 
-// export const postEditProduct: RequestHandler = async (req, res, _next) => {
-// 	const updatedProduct = new Product(
-// 		req.body.title,
-// 		req.body.description,
-// 		+req.body.price,
-// 		req.body.imageUrl,
-// 		req.user._id
-// 	);
+	await Product.replaceOne(
+		{ _id: new ObjectId(req.body.productId) },
+		updatedProduct
+	);
 
-// 	await Product.updateById(req.body.productId, updatedProduct);
+	console.log('Product Updated ....');
 
-// 	console.log('Product Updated ....');
+	res.redirect('/admin/products');
+};
 
-// 	res.redirect('/admin/products');
-// };
+export const getProducts: RequestHandler = async (_req, res, _next) => {
+	const products = await Product.find();
 
-// export const getProducts: RequestHandler = async (req, res, _next) => {
-// 	const products = await Product.fetchAll();
-
-// 	res.render('admin/products', {
-// 		products,
-// 		path: '/admin/products',
-// 		pageTitle: 'Admin Products',
-// 	});
-// };
+	res.render('admin/products', {
+		products,
+		path: '/admin/products',
+		pageTitle: 'Admin Products',
+	});
+};
 
 // export const deleteProduct: RequestHandler = async (req, res, _next) => {
 // 	const prodId = req.body.productId;
