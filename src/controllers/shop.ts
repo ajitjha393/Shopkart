@@ -1,25 +1,25 @@
-// import { RequestHandler } from 'express';
-// import { Product } from '../models/product';
+import { RequestHandler } from 'express';
+import Product from '../models/product';
 // // import { Order } from '../models/order';
 
-// export const getIndexPage: RequestHandler = async (_req, res, _next) => {
-// 	const products = await Product.fetchAll();
+export const getIndexPage: RequestHandler = async (_req, res, _next) => {
+	const products = await Product.find();
+	console.log('Products Fetched....');
+	res.render('shop/index', {
+		products,
+		path: '/',
+		pageTitle: 'Shop',
+	});
+};
 
-// 	res.render('shop/index', {
-// 		products,
-// 		path: '/',
-// 		pageTitle: 'Shop',
-// 	});
-// };
-
-// export const getProducts: RequestHandler = async (_req, res, _next) => {
-// 	const products = await Product.fetchAll();
-// 	res.render('shop/product-list', {
-// 		products,
-// 		path: '/products',
-// 		pageTitle: 'All Products',
-// 	});
-// };
+export const getProducts: RequestHandler = async (_req, res, _next) => {
+	const products = await Product.find();
+	res.render('shop/product-list', {
+		products,
+		path: '/products',
+		pageTitle: 'All Products',
+	});
+};
 
 // export const getProductDetails: RequestHandler = async (req, res, _next) => {
 // 	const prodId = req.params.productId;
