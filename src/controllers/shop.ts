@@ -21,21 +21,21 @@ export const getProducts: RequestHandler = async (_req, res, _next) => {
 	});
 };
 
-// export const getProductDetails: RequestHandler = async (req, res, _next) => {
-// 	const prodId = req.params.productId;
-// 	const product = await Product.findById(prodId);
-// 	console.log(product);
-
-// 	if (!product) {
-// 		res.redirect('/');
-// 	} else {
-// 		res.render('shop/product-detail', {
-// 			product,
-// 			path: '/products',
-// 			pageTitle: product.title,
-// 		});
-// 	}
-// };
+export const getProductDetails: RequestHandler = async (req, res, _next) => {
+	const prodId = req.params.productId;
+	const product = await Product.findById(prodId);
+	console.log('Single Product Fetched...');
+	console.log(product);
+	if (!product) {
+		res.redirect('/');
+	} else {
+		res.render('shop/product-detail', {
+			product,
+			path: '/products',
+			pageTitle: (product as any).title,
+		});
+	}
+};
 
 // export const getCart: RequestHandler = async (req, res, _next) => {
 // 	const cartProducts = await req.user.getCart();
