@@ -5,8 +5,9 @@ import rootDir from './utils/rootDir';
 import adminRoutes from './routes/admin';
 import shopRoutes from './routes/shop';
 import { get404Page } from './controllers/error';
-import { initializeDb } from './utils/database';
-import { User } from './models/user';
+import { credentials } from './utils/credentials';
+import { connect } from 'mongoose';
+// import { productSchema } from './models/product';
 
 const app = express();
 
@@ -24,12 +25,6 @@ app.use(express.static(path.join(rootDir, '..', 'public')));
 
 // Custom middleware
 app.use(async (req, _res, next) => {
-	const user = await User.findById('5eca55d0c24c165117bd18bb');
-	if (user) {
-		req.user = new User(user.name, user.email, user.cart);
-		req.user._id = user._id;
-	}
-
 	next();
 });
 
@@ -41,6 +36,8 @@ app.use(shopRoutes);
 app.use(get404Page);
 
 (async () => {
-	await initializeDb();
+	await connect(credentials);
+	console.clear();
+	console.log('Connected.............');
 	app.listen(3000);
 })();
