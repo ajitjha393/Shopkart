@@ -49,15 +49,16 @@ export const getProductDetails: RequestHandler = async (req, res, _next) => {
 // 	});
 // };
 
-// export const postCart: RequestHandler = async (req, res, _next) => {
-// 	const prodId = req.body.productId;
-// 	const product = await Product.findById(prodId);
+export const postCart: RequestHandler = async (req, res, _next) => {
+	const prodId = req.body.productId;
+	const product = await Product.findById(prodId);
 
-// 	if (product) {
-// 		await req.user.addToCart(product, req.user._id);
-// 	}
-// 	res.redirect('/cart');
-// };
+	if (product) {
+		await req.user.addToCart(product);
+	}
+	console.log('Added To Cart....');
+	res.redirect('/cart');
+};
 
 // export const deleteCartProduct: RequestHandler = async (req, res, _next) => {
 // 	const prodId = req.body.productId;
