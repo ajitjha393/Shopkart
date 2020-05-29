@@ -4,8 +4,8 @@ import {
 	getIndexPage,
 	getCart,
 	// 	// getCheckoutPage,
-	// 	getOrders,
-	// 	postOrder,
+	getOrders,
+	postOrder,
 	getProductDetails,
 	postCart,
 	deleteCartProduct,
@@ -24,8 +24,8 @@ router.get('/cart', getCart);
 router.post('/cart', postCart);
 router.post('/cart-delete-item', deleteCartProduct);
 
-// // router.get('/orders', getOrders);
-// // router.post('/create-order', postOrder);
+router.get('/orders', getOrders);
+router.post('/create-order', postOrder);
 // // router.get('/checkout', getCheckoutPage);
 
 export default router;

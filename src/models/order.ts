@@ -1,23 +1,29 @@
-// import { DataTypes, Model } from 'sequelize';
+import { Schema, model } from 'mongoose';
 
-// import { sequelize } from '../utils/database';
+const orderSchema = new Schema({
+	products: [
+		{
+			product: {
+				type: Object,
+				required: true,
+			},
+			quantity: {
+				type: Number,
+				required: true,
+			},
+		},
+	],
 
-// class Order extends Model {
-// 	public id!: number;
-// 	public readonly createdAt!: Date;
-// 	public readonly updatedAt!: Date;
-// }
+	user: {
+		name: {
+			type: String,
+		},
+		userId: {
+			type: Schema.Types.ObjectId,
+			required: true,
+			ref: 'User',
+		},
+	},
+});
 
-// Order.init(
-// 	{
-// 		id: {
-// 			type: DataTypes.INTEGER,
-// 			autoIncrement: true,
-// 			allowNull: false,
-// 			primaryKey: true,
-// 		},
-// 	},
-// 	{ sequelize, modelName: 'order' }
-// );
-
-// export { Order };
+export default model('Order', orderSchema);

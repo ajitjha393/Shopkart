@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import Product from '../models/product';
-// // import { Order } from '../models/order';
+import Order from '../models/order';
 
 export const getIndexPage: RequestHandler = async (_req, res, _next) => {
 	const products = await Product.find();
@@ -68,20 +68,35 @@ export const deleteCartProduct: RequestHandler = async (req, res, _next) => {
 	res.redirect('/cart');
 };
 
-// export const getOrders: RequestHandler = async (req, res, _next) => {
-// 	const orders = await req.user.getOrders(req.user._id);
+export const getOrders: RequestHandler = async (req, res, _next) => {
+	const orders = await req.user.getOrders(req.user._id);
 
-// 	res.render('shop/orders', {
-// 		orders,
-// 		path: '/orders',
-// 		pageTitle: 'Your Orders',
-// 	});
-// };
+	res.render('shop/orders', {
+		orders,
+		path: '/orders',
+		pageTitle: 'Your Orders',
+	});
+};
 
-// export const postOrder: RequestHandler = async (req, res, _next) => {
-// 	await req.user.addOrder(req.user._id);
-// 	res.redirect('/orders');
-// };
+export const postOrder: RequestHandler = async (req, res, _next) => {
+	const user = await req.user.populate('cart.items.productId').execPopulate();
+	const cartProducts = user.cart.items.map((i: any) => ({
+		quantity: i.quantity,
+		product: { ...i.productId._doc },
+	}));
+
+	const order = new Order({
+		user: {
+			name: req.user.name,
+			userId: req.user._id,
+		},
+
+		products: cartProducts,
+	});
+
+	await order.save();
+	res.redirect('/orders');
+};
 
 // // export const getCheckoutPage: RequestHandler = async (_req, res, _next) => {
 // // 	const products = await Product.findAll();

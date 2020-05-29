@@ -12,7 +12,8 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "node dist/app.js",
 		"dev": "nodemon src/app.ts",
-		"build": "tsc -p ."
+		"build": "tsc -p .",
+		"kill": "kill -9 $(lsof -t -i tcp:3000)"
 	},
 	"author": "Bisu",
 	"license": "ISC",
