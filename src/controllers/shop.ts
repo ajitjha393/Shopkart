@@ -69,7 +69,7 @@ export const deleteCartProduct: RequestHandler = async (req, res, _next) => {
 };
 
 export const getOrders: RequestHandler = async (req, res, _next) => {
-	const orders = await req.user.getOrders(req.user._id);
+	const orders = await Order.find({ 'user.userId': req.user._id });
 
 	res.render('shop/orders', {
 		orders,
