@@ -26,7 +26,7 @@ app.use(express.static(path.join(rootDir, '..', 'public')));
 
 // Custom middleware
 app.use(async (req, _res, next) => {
-	req.user = await User.findById('5ed0f4650f30e11fa092bb4a');
+	req.user = await User.findById('5ed0f6410abd5e2f351c84a5');
 	next();
 });
 
@@ -55,3 +55,6 @@ app.use(get404Page);
 
 	app.listen(3000);
 })();
+
+// For killing port
+// kill -9 $(lsof -t -i tcp:3000)
