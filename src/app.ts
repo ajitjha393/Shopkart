@@ -38,22 +38,26 @@ app.use(shopRoutes);
 app.use(get404Page);
 
 (async () => {
-	await connect(credentials);
-	console.clear();
-	// This always return first user
-	if (!(await User.findOne())) {
-		const user = new User({
-			name: 'Bisu Baby',
-			email: 'ajitjha393@gmail.com',
-			cart: {
-				items: [],
-			},
-		});
-		await user.save();
-	}
-	console.log('Connected.............');
+	try {
+		await connect(credentials);
+		console.clear();
+		// This always return first user
+		if (!(await User.findOne())) {
+			const user = new User({
+				name: 'Bisu Baby',
+				email: 'ajitjha393@gmail.com',
+				cart: {
+					items: [],
+				},
+			});
+			await user.save();
+		}
+		console.log('Connected.............');
 
-	app.listen(3000);
+		app.listen(3000);
+	} catch (err) {
+		console.log('Error while connecting to DB');
+	}
 })();
 
 // For killing port

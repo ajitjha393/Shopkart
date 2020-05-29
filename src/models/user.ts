@@ -50,6 +50,23 @@ userSchema.methods.addToCart = function (product: any) {
 	return this.save();
 };
 
+userSchema.methods.getCart = async function () {
+	// console.log(await populate(this.cart.items.productId));
+	// const productIds = this.cart.items.map((item: any) => item.productId);
+	//
+	// 		const cartProducts = await db
+	// 			.collection('products')
+	// 			.find({ _id: { $in: productIds } })
+	// 			.toArray();
+	// 		return cartProducts.map(p => ({
+	// 			...p,
+	// 			quantity: this.cart.items.find(
+	// 				i => i.productId.toString() === p._id.toString()
+	// 			).quantity,
+	// 		}));
+	// 		// return this.cart;
+};
+
 export default model('User', userSchema);
 
 // import { getDb } from '../utils/database';

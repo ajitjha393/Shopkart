@@ -2,7 +2,7 @@ import { Router } from 'express';
 import {
 	getProducts,
 	getIndexPage,
-	// 	getCart,
+	getCart,
 	// 	// getCheckoutPage,
 	// 	getOrders,
 	// 	postOrder,
@@ -20,7 +20,7 @@ router.get('/products', getProducts);
 
 router.get('/products/:productId', getProductDetails);
 
-// // router.get('/cart', getCart);
+router.get('/cart', getCart);
 router.post('/cart', postCart);
 // // router.post('/cart-delete-item', deleteCartProduct);
 
