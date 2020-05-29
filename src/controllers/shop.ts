@@ -61,12 +61,12 @@ export const postCart: RequestHandler = async (req, res, _next) => {
 	res.redirect('/cart');
 };
 
-// export const deleteCartProduct: RequestHandler = async (req, res, _next) => {
-// 	const prodId = req.body.productId;
-// 	await req.user.deleteFromCart(prodId, req.user._id);
-// 	console.log('Deleted From Cart....');
-// 	res.redirect('/cart');
-// };
+export const deleteCartProduct: RequestHandler = async (req, res, _next) => {
+	const prodId = req.body.productId;
+	await req.user.deleteFromCart(prodId);
+	console.log('Deleted From Cart....');
+	res.redirect('/cart');
+};
 
 // export const getOrders: RequestHandler = async (req, res, _next) => {
 // 	const orders = await req.user.getOrders(req.user._id);
