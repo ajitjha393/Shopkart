@@ -77,10 +77,11 @@ export const getProducts: RequestHandler = async (_req, res, _next) => {
 	});
 };
 
-// export const deleteProduct: RequestHandler = async (req, res, _next) => {
-// 	const prodId = req.body.productId;
 
-// 	await Product.deleteById(prodId);
-// 	console.log('Product Deleted ....');
-// 	res.redirect('/admin/products');
-// };
+export const deleteProduct: RequestHandler = async (req, res, _next) => {
+	const prodId = new ObjectId(req.body.productId);
+
+	await Product.deleteOne({_id : prodId});
+	console.log('Product Deleted ....');
+	res.redirect('/admin/products');
+};
