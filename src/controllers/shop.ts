@@ -95,6 +95,7 @@ export const postOrder: RequestHandler = async (req, res, _next) => {
 	});
 
 	await order.save();
+	await req.user.clearCart();
 	res.redirect('/orders');
 };
 

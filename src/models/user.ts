@@ -58,6 +58,11 @@ userSchema.methods.deleteFromCart = function (productId: String) {
 	return this.save();
 };
 
+userSchema.methods.clearCart = function () {
+	this.cart = { items: [] };
+	return this.save();
+};
+
 export default model('User', userSchema);
 
 // 	async addOrder(userId: ObjectId) {
