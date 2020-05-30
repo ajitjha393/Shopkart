@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import User from '../models/user';
-
+import { hash } from 'bcryptjs';
 export const getLoginPage: RequestHandler = (req, res, _next) => {
 	res.render('auth/login', {
 		path: '/login',
@@ -43,7 +43,7 @@ export const postSignup: RequestHandler = async (req, res, _next) => {
 	} else {
 		const user = new User({
 			email: email,
-			password: password,
+			password: await hash(password, 12),
 			cart: { items: [] },
 		});
 
