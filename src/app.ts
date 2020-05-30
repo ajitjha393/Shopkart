@@ -36,7 +36,6 @@ app.use(
 
 app.use(async (req, _res, next) => {
 	req.user = await User.findById('5ed0f6410abd5e2f351c84a5');
-
 	// Cookie addition
 	//-------
 	// req.isLoggedIn =
