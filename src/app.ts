@@ -28,6 +28,16 @@ app.use(express.static(path.join(rootDir, '..', 'public')));
 // Custom middleware
 app.use(async (req, _res, next) => {
 	req.user = await User.findById('5ed0f6410abd5e2f351c84a5');
+
+	// Cookie addition
+	//-------
+	req.isLoggedIn =
+		req
+			.get('Cookie')
+			?.split(';')
+			.find(ck => ck.includes('loggedIn'))
+			?.split('=')[1] == 'true';
+
 	next();
 });
 
