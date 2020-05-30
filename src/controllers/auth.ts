@@ -21,3 +21,13 @@ export const postLogout: RequestHandler = (req, res, _next) => {
 		res.redirect('/');
 	});
 };
+
+export const getSignup: RequestHandler = (_req, res, _next) => {
+	res.render('auth/signup', {
+		path: 'signup',
+		pageTitle: 'Signup',
+		isAuthenticated: false,
+	});
+};
+
+export const postSignup: RequestHandler = (_req, res, _next) => {};
