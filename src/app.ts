@@ -10,7 +10,14 @@ import { credentials } from './utils/credentials';
 import { connect } from 'mongoose';
 import User from './models/user';
 import session from 'express-session';
+import cms from 'connect-mongodb-session';
 const app = express();
+
+const MongoDBStore = cms(session);
+const store = new MongoDBStore({
+	uri: credentials,
+	collection: 'sessions',
+});
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -31,6 +38,7 @@ app.use(
 		secret: 'my secret hash text',
 		resave: false,
 		saveUninitialized: false,
+		store: store,
 	})
 );
 
