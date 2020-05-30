@@ -43,9 +43,7 @@ export const getProductDetails: RequestHandler = async (req, res, _next) => {
 };
 
 export const getCart: RequestHandler = async (req, res, _next) => {
-	const user = await req
-		.session!.user.populate('cart.items.productId')
-		.execPopulate();
+	const user = await req.user.populate('cart.items.productId').execPopulate();
 	const cartProducts = user.cart.items;
 
 	res.render('shop/cart', {
@@ -61,7 +59,7 @@ export const postCart: RequestHandler = async (req, res, _next) => {
 	const product = await Product.findById(prodId);
 
 	if (product) {
-		await req.session!.user.addToCart(product);
+		await req.user.addToCart(product);
 	}
 	console.log('Added To Cart....');
 	res.redirect('/cart');
@@ -69,13 +67,13 @@ export const postCart: RequestHandler = async (req, res, _next) => {
 
 export const deleteCartProduct: RequestHandler = async (req, res, _next) => {
 	const prodId = req.body.productId;
-	await req.session!.user.deleteFromCart(prodId);
+	await req.user.deleteFromCart(prodId);
 	console.log('Deleted From Cart....');
 	res.redirect('/cart');
 };
 
 export const getOrders: RequestHandler = async (req, res, _next) => {
-	const orders = await Order.find({ 'user.userId': req.session!.user._id });
+	const orders = await Order.find({ 'user.userId': req.user._id });
 
 	res.render('shop/orders', {
 		orders,
@@ -86,9 +84,7 @@ export const getOrders: RequestHandler = async (req, res, _next) => {
 };
 
 export const postOrder: RequestHandler = async (req, res, _next) => {
-	const user = await req
-		.session!.user.populate('cart.items.productId')
-		.execPopulate();
+	const user = await req.user.populate('cart.items.productId').execPopulate();
 	const cartProducts = user.cart.items.map((i: any) => ({
 		quantity: i.quantity,
 		product: { ...i.productId._doc },
@@ -96,15 +92,15 @@ export const postOrder: RequestHandler = async (req, res, _next) => {
 
 	const order = new Order({
 		user: {
-			name: req.session!.user.name,
-			userId: req.session!.user._id,
+			name: req.user.name,
+			userId: req.user._id,
 		},
 
 		products: cartProducts,
 	});
 
 	await order.save();
-	await req.session!.user.clearCart();
+	await req.user.clearCart();
 	res.redirect('/orders');
 };
 

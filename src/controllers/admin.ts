@@ -18,7 +18,7 @@ export const postAddProduct: RequestHandler = async (req, res, _next) => {
 			description: req.body.description,
 			price: +req.body.price,
 			imageUrl: req.body.imageUrl,
-			userId: req.user._id,
+			userId: req.user,
 		});
 
 		await product.save();

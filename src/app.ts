@@ -41,6 +41,14 @@ app.use(
 		store: store,
 	})
 );
+
+app.use(async (req, res, next) => {
+	if (req.session!.user) {
+		req.user = await User.findById(req.session!.user._id);
+	}
+
+	next();
+});
 // use is for all actions and acts as prefix
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
