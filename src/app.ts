@@ -41,21 +41,6 @@ app.use(
 		store: store,
 	})
 );
-
-app.use(async (req, _res, next) => {
-	req.user = await User.findById('5ed0f6410abd5e2f351c84a5');
-	// Cookie addition
-	//-------
-	// req.isLoggedIn =
-	// 	req
-	// 		.get('Cookie')
-	// 		?.split(';')
-	// 		.find(ck => ck.includes('loggedIn'))
-	// 		?.split('=')[1] == 'true';
-
-	next();
-});
-
 // use is for all actions and acts as prefix
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
