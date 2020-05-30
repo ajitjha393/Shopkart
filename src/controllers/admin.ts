@@ -2,11 +2,12 @@ import { RequestHandler } from 'express';
 import Product from '../models/product';
 import { ObjectId } from 'mongodb';
 
-export const getAddProduct: RequestHandler = (_req, res, _next) => {
+export const getAddProduct: RequestHandler = (req, res, _next) => {
 	res.render('admin/edit-product', {
 		pageTitle: 'Add Product',
 		path: '/admin/add-product',
 		editing: false,
+		isAuthenticated: req.isLoggedIn,
 	});
 };
 
@@ -47,6 +48,7 @@ export const getEditProduct: RequestHandler = async (req, res, _next) => {
 		path: '/admin/edit-product',
 		editing: editMode,
 		product,
+		isAuthenticated: req.isLoggedIn,
 	});
 };
 
@@ -69,13 +71,14 @@ export const postEditProduct: RequestHandler = async (req, res, _next) => {
 	res.redirect('/admin/products');
 };
 
-export const getProducts: RequestHandler = async (_req, res, _next) => {
+export const getProducts: RequestHandler = async (req, res, _next) => {
 	const products = await Product.find();
 
 	res.render('admin/products', {
 		products,
 		path: '/admin/products',
 		pageTitle: 'Admin Products',
+		isAuthenticated: req.isLoggedIn,
 	});
 };
 

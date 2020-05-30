@@ -2,7 +2,7 @@ import { RequestHandler } from 'express';
 import Product from '../models/product';
 import Order from '../models/order';
 
-export const getIndexPage: RequestHandler = async (_req, res, _next) => {
+export const getIndexPage: RequestHandler = async (req, res, _next) => {
 	const products = await Product.find();
 	// Can also add diff filtering
 	// const products = await Product.find().select('title imageUrl').populate('userId);
@@ -11,15 +11,17 @@ export const getIndexPage: RequestHandler = async (_req, res, _next) => {
 		products,
 		path: '/',
 		pageTitle: 'Shop',
+		isAuthenticated: req.isLoggedIn,
 	});
 };
 
-export const getProducts: RequestHandler = async (_req, res, _next) => {
+export const getProducts: RequestHandler = async (req, res, _next) => {
 	const products = await Product.find();
 	res.render('shop/product-list', {
 		products,
 		path: '/products',
 		pageTitle: 'All Products',
+		isAuthenticated: req.isLoggedIn,
 	});
 };
 
@@ -35,6 +37,7 @@ export const getProductDetails: RequestHandler = async (req, res, _next) => {
 			product,
 			path: '/products',
 			pageTitle: (product as any).title,
+			isAuthenticated: req.isLoggedIn,
 		});
 	}
 };
@@ -47,6 +50,7 @@ export const getCart: RequestHandler = async (req, res, _next) => {
 		products: cartProducts,
 		path: '/cart',
 		pageTitle: 'Your Cart',
+		isAuthenticated: req.isLoggedIn,
 	});
 };
 
@@ -75,6 +79,7 @@ export const getOrders: RequestHandler = async (req, res, _next) => {
 		orders,
 		path: '/orders',
 		pageTitle: 'Your Orders',
+		isAuthenticated: req.isLoggedIn,
 	});
 };
 

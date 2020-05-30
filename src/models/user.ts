@@ -64,32 +64,3 @@ userSchema.methods.clearCart = function () {
 };
 
 export default model('User', userSchema);
-
-// 	async addOrder(userId: ObjectId) {
-// 		const db = getDb();
-// 		const cartProducts = await this.getCart();
-
-// 		const order = {
-// 			items: cartProducts,
-// 			user: {
-// 				_id: userId,
-// 				name: this.name,
-// 				email: this.email,
-// 			},
-// 		};
-
-// 		await db.collection('orders').insertOne(order);
-// 		this.cart = { items: [] };
-// 		await db.collection('users').updateOne(
-// 			{ _id: userId },
-// 			{
-// 				$set: { cart: { items: [] } },
-// 			}
-// 		);
-// 	}
-
-// 	getOrders(userId: ObjectId) {
-// 		const db = getDb();
-// 		return db.collection('orders').find({ 'user._id': userId }).toArray();
-// 	}
-// }
