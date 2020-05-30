@@ -12,7 +12,7 @@ export const getLoginPage: RequestHandler = (req, res, _next) => {
 export const postLogin: RequestHandler = async (req, res, _next) => {
 	req.session!.user = await User.findById('5ed0f6410abd5e2f351c84a5');
 	req.session!.isLoggedIn = true;
-	res.redirect('/');
+	req.session?.save(_ => res.redirect('/'));
 };
 
 export const postLogout: RequestHandler = (req, res, _next) => {
