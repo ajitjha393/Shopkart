@@ -9,8 +9,7 @@ import { get404Page } from './controllers/error';
 import { credentials } from './utils/credentials';
 import { connect } from 'mongoose';
 import User from './models/user';
-// import { productSchema } from './models/product';
-
+import session from 'express-session';
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -26,6 +25,15 @@ app.use(
 app.use(express.static(path.join(rootDir, '..', 'public')));
 
 // Custom middleware
+
+app.use(
+	session({
+		secret: 'my secret hash text',
+		resave: false,
+		saveUninitialized: false,
+	})
+);
+
 app.use(async (req, _res, next) => {
 	req.user = await User.findById('5ed0f6410abd5e2f351c84a5');
 
