@@ -31,12 +31,12 @@ app.use(async (req, _res, next) => {
 
 	// Cookie addition
 	//-------
-	req.isLoggedIn =
-		req
-			.get('Cookie')
-			?.split(';')
-			.find(ck => ck.includes('loggedIn'))
-			?.split('=')[1] == 'true';
+	// req.isLoggedIn =
+	// 	req
+	// 		.get('Cookie')
+	// 		?.split(';')
+	// 		.find(ck => ck.includes('loggedIn'))
+	// 		?.split('=')[1] == 'true';
 
 	next();
 });
