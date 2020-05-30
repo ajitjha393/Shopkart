@@ -30,4 +30,24 @@ export const getSignup: RequestHandler = (_req, res, _next) => {
 	});
 };
 
-export const postSignup: RequestHandler = (_req, res, _next) => {};
+export const postSignup: RequestHandler = async (req, res, _next) => {
+	const email = req.body.email;
+	const password = req.body.password;
+	const confirmPassword = req.body.confirmPassword;
+
+	// Check if email exists in DB
+	const user = await User.findOne({ email: email });
+	if (user) {
+		console.log('Email already exists...Use another');
+		res.redirect('/signup');
+	} else {
+		const user = new User({
+			email: email,
+			password: password,
+			cart: { items: [] },
+		});
+
+		await user.save();
+		res.redirect('/login');
+	}
+};

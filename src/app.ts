@@ -61,17 +61,7 @@ app.use(get404Page);
 	try {
 		await connect(credentials);
 		console.clear();
-		// This always return first user
-		if (!(await User.findOne())) {
-			const user = new User({
-				name: 'Bisu Baby',
-				email: 'ajitjha393@gmail.com',
-				cart: {
-					items: [],
-				},
-			});
-			await user.save();
-		}
+
 		console.log('Connected.............');
 
 		app.listen(3000);
@@ -79,6 +69,3 @@ app.use(get404Page);
 		console.log('Error while connecting to DB');
 	}
 })();
-
-// For killing port
-// kill -9 $(lsof -t -i tcp:3000)
