@@ -4,6 +4,7 @@ import path from 'path';
 import rootDir from './utils/rootDir';
 import adminRoutes from './routes/admin';
 import shopRoutes from './routes/shop';
+import authRoutes from './routes/auth';
 import { get404Page } from './controllers/error';
 import { credentials } from './utils/credentials';
 import { connect } from 'mongoose';
@@ -33,6 +34,7 @@ app.use(async (req, _res, next) => {
 // use is for all actions and acts as prefix
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 
 // 404 Error
 app.use(get404Page);
