@@ -11,7 +11,7 @@ export const getIndexPage: RequestHandler = async (req, res, _next) => {
 		products,
 		path: '/',
 		pageTitle: 'Shop',
-		isAuthenticated: req.isLoggedIn,
+		isAuthenticated: req.session!.isLoggedIn,
 	});
 };
 
@@ -21,7 +21,7 @@ export const getProducts: RequestHandler = async (req, res, _next) => {
 		products,
 		path: '/products',
 		pageTitle: 'All Products',
-		isAuthenticated: req.isLoggedIn,
+		isAuthenticated: req.session!.isLoggedIn,
 	});
 };
 
@@ -37,7 +37,7 @@ export const getProductDetails: RequestHandler = async (req, res, _next) => {
 			product,
 			path: '/products',
 			pageTitle: (product as any).title,
-			isAuthenticated: req.isLoggedIn,
+			isAuthenticated: req.session!.isLoggedIn,
 		});
 	}
 };
@@ -50,7 +50,7 @@ export const getCart: RequestHandler = async (req, res, _next) => {
 		products: cartProducts,
 		path: '/cart',
 		pageTitle: 'Your Cart',
-		isAuthenticated: req.isLoggedIn,
+		isAuthenticated: req.session!.isLoggedIn,
 	});
 };
 
@@ -79,7 +79,7 @@ export const getOrders: RequestHandler = async (req, res, _next) => {
 		orders,
 		path: '/orders',
 		pageTitle: 'Your Orders',
-		isAuthenticated: req.isLoggedIn,
+		isAuthenticated: req.session!.isLoggedIn,
 	});
 };
 

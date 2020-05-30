@@ -5,11 +5,18 @@ export const getLoginPage: RequestHandler = (req, res, _next) => {
 	res.render('auth/login', {
 		path: '/login',
 		pageTitle: 'Login',
-		isAuthenticated: false,
+		isAuthenticated: req.session!.isLoggedIn,
 	});
 };
 
 export const postLogin: RequestHandler = (req, res, _next) => {
 	req.session!.isLoggedIn = true;
 	res.redirect('/');
+};
+
+export const postLogout: RequestHandler = (req, res, _next) => {
+	req.session?.destroy(err => {
+		console.log('Session cleared...');
+		res.redirect('/');
+	});
 };
