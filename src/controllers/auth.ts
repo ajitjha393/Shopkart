@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import User from '../models/user';
-import { hash } from 'bcryptjs';
+import { hash, compare } from 'bcryptjs';
 export const getLoginPage: RequestHandler = (req, res, _next) => {
 	res.render('auth/login', {
 		path: '/login',
@@ -10,9 +10,21 @@ export const getLoginPage: RequestHandler = (req, res, _next) => {
 };
 
 export const postLogin: RequestHandler = async (req, res, _next) => {
-	req.session!.user = await User.findById('5ed0f6410abd5e2f351c84a5');
-	req.session!.isLoggedIn = true;
-	req.session?.save(_ => res.redirect('/'));
+	const email = req.body.email;
+	const password = req.body.password;
+	const user = await User.findOne({ email: email });
+	if (!user) {
+		console.log('Invalid credentials...');
+		res.redirect('/login');
+	} else {
+		if (await compare(password, (user as any).password)) {
+			req.session!.user = user;
+			req.session!.isLoggedIn = true;
+			req.session?.save(_ => res.redirect('/'));
+		} else {
+			res.redirect('/login');
+		}
+	}
 };
 
 export const postLogout: RequestHandler = (req, res, _next) => {
