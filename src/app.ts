@@ -11,6 +11,7 @@ import { connect } from 'mongoose';
 import User from './models/user';
 import session from 'express-session';
 import cms from 'connect-mongodb-session';
+import csrf from 'csurf';
 const app = express();
 
 const MongoDBStore = cms(session);
@@ -19,6 +20,7 @@ const store = new MongoDBStore({
 	collection: 'sessions',
 });
 
+const csrfProtection = csrf();
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
@@ -49,6 +51,8 @@ app.use(async (req, res, next) => {
 
 	next();
 });
+
+app.use(csrfProtection);
 // use is for all actions and acts as prefix
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);

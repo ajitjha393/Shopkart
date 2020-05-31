@@ -12,6 +12,7 @@ export const getIndexPage: RequestHandler = async (req, res, _next) => {
 		path: '/',
 		pageTitle: 'Shop',
 		isAuthenticated: req.session!.isLoggedIn,
+		csrfToken: req.csrfToken(),
 	});
 };
 
