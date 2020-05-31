@@ -93,7 +93,7 @@ export const postOrder: RequestHandler = async (req, res, _next) => {
 
 	const order = new Order({
 		user: {
-			name: req.user.name,
+			email: req.user.email,
 			userId: req.user._id,
 		},
 
