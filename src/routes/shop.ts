@@ -11,6 +11,8 @@ import {
 	deleteCartProduct,
 } from '../controllers/shop';
 
+import { isAuth } from '../middleware/isAuth';
+
 // // It acts like mini express App
 const router = Router();
 
@@ -20,12 +22,12 @@ router.get('/products', getProducts);
 
 router.get('/products/:productId', getProductDetails);
 
-router.get('/cart', getCart);
-router.post('/cart', postCart);
-router.post('/cart-delete-item', deleteCartProduct);
+router.get('/cart', isAuth, getCart);
+router.post('/cart', isAuth, postCart);
+router.post('/cart-delete-item', isAuth, deleteCartProduct);
 
-router.get('/orders', getOrders);
-router.post('/create-order', postOrder);
+router.get('/orders', isAuth, getOrders);
+router.post('/create-order', isAuth, postOrder);
 // // router.get('/checkout', getCheckoutPage);
 
 export default router;
