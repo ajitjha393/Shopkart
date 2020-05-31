@@ -54,6 +54,14 @@ app.use(async (req, res, next) => {
 
 app.use(csrfProtection);
 // use is for all actions and acts as prefix
+
+// Passing local variables to the views
+app.use((req, res, next) => {
+	res.locals.isAuthenticated = req.session!.isLoggedIn;
+
+	res.locals.csrfToken = req.csrfToken();
+	next();
+});
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
