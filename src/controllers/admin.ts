@@ -3,6 +3,11 @@ import Product from '../models/product';
 import { ObjectId } from 'mongodb';
 
 export const getAddProduct: RequestHandler = (req, res, _next) => {
+	if (!req.session!.user) {
+		console.log('Please Login...');
+		return res.redirect('/login');
+	}
+
 	res.render('admin/edit-product', {
 		pageTitle: 'Add Product',
 		path: '/admin/add-product',
