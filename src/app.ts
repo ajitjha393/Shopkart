@@ -76,9 +76,8 @@ app.use(get404Page);
 		await connect(credentials);
 		console.clear();
 
-		console.log('Connected.............');
-
 		app.listen(3000);
+		console.log('Connected.............');
 	} catch (err) {
 		console.log('Error while connecting to DB');
 	}
