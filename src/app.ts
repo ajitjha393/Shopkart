@@ -12,6 +12,7 @@ import User from './models/user';
 import session from 'express-session';
 import cms from 'connect-mongodb-session';
 import csrf from 'csurf';
+import flash from 'connect-flash';
 const app = express();
 
 const MongoDBStore = cms(session);
@@ -53,6 +54,7 @@ app.use(async (req, res, next) => {
 });
 
 app.use(csrfProtection);
+app.use(flash());
 // use is for all actions and acts as prefix
 
 // Passing local variables to the views

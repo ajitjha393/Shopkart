@@ -4,15 +4,11 @@ import Order from '../models/order';
 
 export const getIndexPage: RequestHandler = async (req, res, _next) => {
 	const products = await Product.find();
-	// Can also add diff filtering
-	// const products = await Product.find().select('title imageUrl').populate('userId);
 	console.log('Products Fetched....');
 	res.render('shop/index', {
 		products,
 		path: '/',
 		pageTitle: 'Shop',
-		// isAuthenticated: req.session!.isLoggedIn,
-		// csrfToken: req.csrfToken(),
 	});
 };
 

@@ -6,6 +6,7 @@ export const getLoginPage: RequestHandler = (req, res, _next) => {
 		path: '/login',
 		pageTitle: 'Login',
 		isAuthenticated: false,
+		errorMessage: req.flash('error'),
 	});
 };
 
@@ -13,8 +14,10 @@ export const postLogin: RequestHandler = async (req, res, _next) => {
 	const email = req.body.email;
 	const password = req.body.password;
 	const user = await User.findOne({ email: email });
+
 	if (!user) {
-		console.log('Invalid credentials...');
+		
+		req.flash('error', 'Invalid Email, Email does not exists...');
 		res.redirect('/login');
 	} else {
 		if (await compare(password, (user as any).password)) {
