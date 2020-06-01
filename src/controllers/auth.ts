@@ -16,7 +16,6 @@ export const postLogin: RequestHandler = async (req, res, _next) => {
 	const user = await User.findOne({ email: email });
 
 	if (!user) {
-		
 		req.flash('error', 'Invalid Email, Email does not exists...');
 		res.redirect('/login');
 	} else {
