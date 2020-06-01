@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import User from '../models/user';
 import { hash, compare } from 'bcryptjs';
-import { GMailService } from '../utils/GmailService';
+import { MailService } from '../utils/MailService';
 
 export const getLoginPage: RequestHandler = (req, res, _next) => {
 	let errorMessage = req.flash('error');
@@ -82,11 +82,25 @@ export const postSignup: RequestHandler = async (req, res, _next) => {
 		});
 
 		await user.save();
-		await new GMailService().sendMail(
-			email,
-			'Regarding Account Creation',
-			'<h1>You successfully signed up!</h1>'
-		);
+		try {
+			await MailService.sendMail({
+				to: email,
+				from: 'shop@node.com',
+				subject: 'Regarding Signup',
+				html: '<strong>Account successfully Created...</strong>',
+			});
+
+			console.log('Email Sent...');
+		} catch (err) {
+			console.log('Error in sending mail...');
+			console.log(err);
+		}
+
+		// await new GMailService().sendMail(
+		// 	email,
+		// 	'Regarding Account Creation',
+		// 	'<h1>You successfully signed up!</h1>'
+		// );
 
 		res.redirect('/login');
 	}
