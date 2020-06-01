@@ -13,6 +13,7 @@ import session from 'express-session';
 import cms from 'connect-mongodb-session';
 import csrf from 'csurf';
 import flash from 'connect-flash';
+import * as nodemon from 'nodemon';
 const app = express();
 
 const MongoDBStore = cms(session);
@@ -70,6 +71,21 @@ app.use(authRoutes);
 
 // 404 Error
 app.use(get404Page);
+
+process
+
+	// Handle normal exits
+	.on('exit', code => {
+		nodemon.emit('quit');
+		process.exit(code);
+	})
+
+	// Handle CTRL+C
+	.on('SIGINT', () => {
+		nodemon.emit('quit');
+		console.log('bye');
+		process.exit(0);
+	});
 
 (async () => {
 	try {

@@ -1,6 +1,8 @@
 import { RequestHandler } from 'express';
 import User from '../models/user';
 import { hash, compare } from 'bcryptjs';
+import { GMailService } from '../utils/GmailService';
+
 export const getLoginPage: RequestHandler = (req, res, _next) => {
 	let errorMessage = req.flash('error');
 	console.log(errorMessage);
@@ -80,6 +82,12 @@ export const postSignup: RequestHandler = async (req, res, _next) => {
 		});
 
 		await user.save();
+		await new GMailService().sendMail(
+			email,
+			'Regarding Account Creation',
+			'<h1>You successfully signed up!</h1>'
+		);
+
 		res.redirect('/login');
 	}
 };
