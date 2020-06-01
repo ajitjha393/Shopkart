@@ -2,11 +2,18 @@ import { RequestHandler } from 'express';
 import User from '../models/user';
 import { hash, compare } from 'bcryptjs';
 export const getLoginPage: RequestHandler = (req, res, _next) => {
+	let errorMessage = req.flash('error');
+	console.log(errorMessage);
+	if (errorMessage.length > 0) {
+		errorMessage = errorMessage[0];
+	} else {
+		errorMessage = null;
+	}
 	res.render('auth/login', {
 		path: '/login',
 		pageTitle: 'Login',
 		isAuthenticated: false,
-		errorMessage: req.flash('error'),
+		errorMessage: errorMessage,
 	});
 };
 
@@ -16,15 +23,17 @@ export const postLogin: RequestHandler = async (req, res, _next) => {
 	const user = await User.findOne({ email: email });
 
 	if (!user) {
-		req.flash('error', 'Invalid Email, Email does not exists...');
-		res.redirect('/login');
+		req.flash('error', 'Invalid Email or password!');
+		// SOme times it take time to save in session hence its good to use callbac format like this
+		req.session?.save(_ => res.redirect('/login'));
 	} else {
 		if (await compare(password, (user as any).password)) {
 			req.session!.user = user;
 			req.session!.isLoggedIn = true;
 			req.session?.save(_ => res.redirect('/'));
 		} else {
-			res.redirect('/login');
+			req.flash('error', 'Invalid Email or password!');
+			req.session?.save(_ => res.redirect('/login'));
 		}
 	}
 };
@@ -36,11 +45,20 @@ export const postLogout: RequestHandler = (req, res, _next) => {
 	});
 };
 
-export const getSignup: RequestHandler = (_req, res, _next) => {
+export const getSignup: RequestHandler = (req, res, _next) => {
+	let errorMessage = req.flash('error');
+	console.log(errorMessage);
+	if (errorMessage.length > 0) {
+		errorMessage = errorMessage[0];
+	} else {
+		errorMessage = null;
+	}
+
 	res.render('auth/signup', {
 		path: 'signup',
 		pageTitle: 'Signup',
 		isAuthenticated: false,
+		errorMessage: errorMessage,
 	});
 };
 
@@ -52,8 +70,8 @@ export const postSignup: RequestHandler = async (req, res, _next) => {
 	// Check if email exists in DB
 	const user = await User.findOne({ email: email });
 	if (user) {
-		console.log('Email already exists...Use another');
-		res.redirect('/signup');
+		req.flash('error', 'Email already exists, pick different one');
+		req.session?.save(_ => res.redirect('/signup'));
 	} else {
 		const user = new User({
 			email: email,
