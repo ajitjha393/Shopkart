@@ -62,9 +62,7 @@ export const postEditProduct: RequestHandler = async (req, res, _next) => {
 	};
 
 	const product: any = await Product.findById(req.body.productId);
-	console.log(product);
-	console.log(req.user);
-	if (product.userId !== req.user._id) {
+	if (product.userId.toString() !== req.user._id.toString()) {
 		console.log('You do not have authorization to edit this product...');
 		return res.redirect('/');
 	} else {
