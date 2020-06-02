@@ -10,9 +10,7 @@
 	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "node dist/app.js",
-		"dev": "nodemon src/app.ts",
-		"build": "tsc -p .",
+		"start": "nodemon dist/app.js",
 		"kill": "kill -9 $(lsof -t -i tcp:3000)"
 	},
 	"author": "Bisu",
@@ -29,12 +27,6 @@
 		"express-session": "^1.17.1",
 		"mongodb": "^3.5.7",
 		"mongoose": "^5.9.16",
-		"mysql": "^2.18.1",
-		"mysql2": "^2.1.0",
-		"nodemailer": "^6.4.4",
-		"nodemailer-sendgrid-transport": "^0.2.0",
-		"nodemon": "^2.0.4",
-		"sequelize": "^5.21.9",
 		"uniqid": "^5.2.0"
 	},
 	"devDependencies": {
