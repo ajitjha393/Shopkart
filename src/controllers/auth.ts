@@ -2,6 +2,7 @@ import { RequestHandler } from 'express';
 import User from '../models/user';
 import { hash, compare } from 'bcryptjs';
 import { MailService } from '../utils/MailService';
+import { randomBytes } from 'crypto';
 
 export const getLoginPage: RequestHandler = (req, res, _next) => {
 	let errorMessage = req.flash('error');
@@ -110,5 +111,40 @@ export const getReset: RequestHandler = (req, res, _next) => {
 		path: '/reset',
 		pageTitle: 'Reset Password',
 		errorMessage: errorMessage,
+	});
+};
+
+export const postReset: RequestHandler = (req, res, _next) => {
+	randomBytes(32, async (err, buf) => {
+		if (err) {
+			console.log(err);
+			return res.redirect('/reset');
+		}
+		const email = req.body.email;
+		const token = buf.toString('hex');
+		const user = await User.findOne({ email: email });
+
+		if (!user) {
+			req.flash('error', 'No account with that Email Found.');
+			return req.session?.save(_ => res.redirect('/reset'));
+		}
+
+		(user as any).resetToken = token;
+		(user as any).resetTokenExpiration = 3600000;
+		await user.save();
+
+		res.redirect('/');
+		await MailService.sendMail({
+			to: email,
+			from: 'shop@node.com',
+			subject: 'Password Reset',
+			html: `
+				<h2> You requested a password Reset</h2>
+				<p>Click this  <a href="http://localhost/reset/${token}">Link</a> to set a new password.</p>
+
+			`,
+		});
+
+		console.log('Email Sent...');
 	});
 };
