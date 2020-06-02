@@ -61,14 +61,27 @@ export const postEditProduct: RequestHandler = async (req, res, _next) => {
 		userId: req.user._id,
 	};
 
-	await Product.replaceOne(
-		{ _id: new ObjectId(req.body.productId) },
-		updatedProduct
-	);
+	const product: any = await Product.findById(req.body.productId);
+	console.log(product);
+	console.log(req.user);
+	if (product.userId !== req.user._id) {
+		console.log('You do not have authorization to edit this product...');
+		return res.redirect('/');
+	} else {
+		(product.title = updatedProduct.title),
+			(product.description = updatedProduct.description),
+			(product.price = updatedProduct.price),
+			(product.imageUrl = updatedProduct.imageUrl),
+			await product.save();
 
-	console.log('Product Updated ....');
+		console.log('Product Updated ....');
 
-	res.redirect('/admin/products');
+		res.redirect('/admin/products');
+	}
+	// await Product.replaceOne(
+	// 	{ _id: new ObjectId(req.body.productId) },
+	// 	updatedProduct
+	// );
 };
 
 export const getProducts: RequestHandler = async (req, res, _next) => {
@@ -82,9 +95,9 @@ export const getProducts: RequestHandler = async (req, res, _next) => {
 };
 
 export const deleteProduct: RequestHandler = async (req, res, _next) => {
-	const prodId = new ObjectId(req.body.productId);
+	const prodId = req.body.productId;
 
-	await Product.deleteOne({ _id: prodId });
+	await Product.deleteOne({ _id: prodId, userId: req.user._id });
 	console.log('Product Deleted ....');
 	res.redirect('/admin/products');
 };
