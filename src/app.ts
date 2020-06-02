@@ -45,7 +45,7 @@ app.use(
 	})
 );
 
-app.use(async (req, res, next) => {
+app.use(async (req, _res, next) => {
 	if (req.session!.user) {
 		req.user = await User.findById(req.session!.user._id);
 	}
