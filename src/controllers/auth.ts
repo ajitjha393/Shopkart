@@ -14,7 +14,6 @@ export const getLoginPage: RequestHandler = (req, res, _next) => {
 	res.render('auth/login', {
 		path: '/login',
 		pageTitle: 'Login',
-		isAuthenticated: false,
 		errorMessage: errorMessage,
 	});
 };
@@ -26,7 +25,7 @@ export const postLogin: RequestHandler = async (req, res, _next) => {
 
 	if (!user) {
 		req.flash('error', 'Invalid Email or password!');
-		// SOme times it take time to save in session hence its good to use callbac format like this
+		// Some times it take time to save in session hence its good to use callbac format like this
 		req.session?.save(_ => res.redirect('/login'));
 	} else {
 		if (await compare(password, (user as any).password)) {
@@ -59,7 +58,6 @@ export const getSignup: RequestHandler = (req, res, _next) => {
 	res.render('auth/signup', {
 		path: 'signup',
 		pageTitle: 'Signup',
-		isAuthenticated: false,
 		errorMessage: errorMessage,
 	});
 };
@@ -82,6 +80,7 @@ export const postSignup: RequestHandler = async (req, res, _next) => {
 		});
 
 		await user.save();
+		res.redirect('/login');
 		try {
 			await MailService.sendMail({
 				to: email,
@@ -95,13 +94,21 @@ export const postSignup: RequestHandler = async (req, res, _next) => {
 			console.log('Error in sending mail...');
 			console.log(err);
 		}
-
-		// await new GMailService().sendMail(
-		// 	email,
-		// 	'Regarding Account Creation',
-		// 	'<h1>You successfully signed up!</h1>'
-		// );
-
-		res.redirect('/login');
 	}
+};
+
+export const getReset: RequestHandler = (req, res, _next) => {
+	let errorMessage = req.flash('error');
+	console.log(errorMessage);
+	if (errorMessage.length > 0) {
+		errorMessage = errorMessage[0];
+	} else {
+		errorMessage = null;
+	}
+
+	res.render('auth/reset', {
+		path: '/reset',
+		pageTitle: 'Reset Password',
+		errorMessage: errorMessage,
+	});
 };

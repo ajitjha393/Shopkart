@@ -5,6 +5,7 @@ import {
 	postLogin,
 	getSignup,
 	postSignup,
+	getReset
 } from '../controllers/auth';
 
 const router = Router();
@@ -16,5 +17,7 @@ router.get('/signup', getSignup);
 router.post('/signup', postSignup);
 
 router.post('/logout', postLogout);
+
+router.get('/reset', getReset);
 
 export default router;
