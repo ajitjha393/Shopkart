@@ -140,11 +140,11 @@ export const postReset: RequestHandler = (req, res, _next) => {
 			subject: 'Password Reset',
 			html: `
 				<h2> You requested a password Reset</h2>
-				<p>Click this  <a href="http://localhost/reset/${token}">Link</a> to set a new password.</p>
+				<p>Click this  <a href="http://localhost:3000/reset/${token}">Link</a> to set a new password.</p>
 
 			`,
 		});
 
-		console.log('Email Sent...');
+		console.log('Reset Password Email Sent...');
 	});
 };
