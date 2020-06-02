@@ -1,21 +1,15 @@
 import { RequestHandler } from 'express';
 import User from '../models/user';
 import { hash, compare } from 'bcryptjs';
+import { getErrorMessage } from '../utils/getFlashError';
 import { MailService } from '../utils/MailService';
 import { randomBytes } from 'crypto';
 
 export const getLoginPage: RequestHandler = (req, res, _next) => {
-	let errorMessage = req.flash('error');
-	console.log(errorMessage);
-	if (errorMessage.length > 0) {
-		errorMessage = errorMessage[0];
-	} else {
-		errorMessage = null;
-	}
 	res.render('auth/login', {
 		path: '/login',
 		pageTitle: 'Login',
-		errorMessage: errorMessage,
+		errorMessage: getErrorMessage(req),
 	});
 };
 
@@ -48,18 +42,10 @@ export const postLogout: RequestHandler = (req, res, _next) => {
 };
 
 export const getSignup: RequestHandler = (req, res, _next) => {
-	let errorMessage = req.flash('error');
-	console.log(errorMessage);
-	if (errorMessage.length > 0) {
-		errorMessage = errorMessage[0];
-	} else {
-		errorMessage = null;
-	}
-
 	res.render('auth/signup', {
 		path: 'signup',
 		pageTitle: 'Signup',
-		errorMessage: errorMessage,
+		errorMessage: getErrorMessage(req),
 	});
 };
 
@@ -99,18 +85,10 @@ export const postSignup: RequestHandler = async (req, res, _next) => {
 };
 
 export const getReset: RequestHandler = (req, res, _next) => {
-	let errorMessage = req.flash('error');
-	console.log(errorMessage);
-	if (errorMessage.length > 0) {
-		errorMessage = errorMessage[0];
-	} else {
-		errorMessage = null;
-	}
-
 	res.render('auth/reset', {
 		path: '/reset',
 		pageTitle: 'Reset Password',
-		errorMessage: errorMessage,
+		errorMessage: getErrorMessage(req),
 	});
 };
 
@@ -130,7 +108,7 @@ export const postReset: RequestHandler = (req, res, _next) => {
 		}
 
 		(user as any).resetToken = token;
-		(user as any).resetTokenExpiration = 3600000;
+		(user as any).resetTokenExpiration = Date.now() + 3600000;
 		await user.save();
 
 		res.redirect('/');
@@ -146,5 +124,33 @@ export const postReset: RequestHandler = (req, res, _next) => {
 		});
 
 		console.log('Reset Password Email Sent...');
+	});
+};
+
+export const getNewPassword: RequestHandler = async (req, res, _next) => {
+	const token = req.params.token;
+	const user = await User.findOne({
+		resetToken: token,
+		resetTokenExpiration: { $gt: Date.now() },
+	});
+
+	if (user) {
+		return res.render('auth/new-password', {
+			path: '/new-password',
+			pageTitle: 'Update Password',
+			errorMessage: getErrorMessage(req),
+			userId: user?._id.toString(),
+		});
+	} else {
+		req.flash('error', 'Invalid Token...');
+		return req.session?.save(_ => res.redirect('/reset'));
+	}
+};
+
+export const postNewPassword: RequestHandler = (req, res, _next) => {
+	res.render('auth/login', {
+		path: '/login',
+		pageTitle: 'Login',
+		errorMessage: getErrorMessage(req),
 	});
 };
