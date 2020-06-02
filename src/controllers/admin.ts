@@ -72,13 +72,12 @@ export const postEditProduct: RequestHandler = async (req, res, _next) => {
 };
 
 export const getProducts: RequestHandler = async (req, res, _next) => {
-	const products = await Product.find();
+	const products = await Product.find({ userId: req.user._id });
 
 	res.render('admin/products', {
 		products,
 		path: '/admin/products',
 		pageTitle: 'Admin Products',
-		// isAuthenticated: req.session!.isLoggedIn,
 	});
 };
 
