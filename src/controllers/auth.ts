@@ -140,17 +140,30 @@ export const getNewPassword: RequestHandler = async (req, res, _next) => {
 			pageTitle: 'Update Password',
 			errorMessage: getErrorMessage(req),
 			userId: user?._id.toString(),
+			token: token,
 		});
 	} else {
-		req.flash('error', 'Invalid Token...');
+		req.flash('error', 'Invalid Token...Try again');
 		return req.session?.save(_ => res.redirect('/reset'));
 	}
 };
 
-export const postNewPassword: RequestHandler = (req, res, _next) => {
-	res.render('auth/login', {
-		path: '/login',
-		pageTitle: 'Login',
-		errorMessage: getErrorMessage(req),
+export const postNewPassword: RequestHandler = async (req, res, _next) => {
+	const userId = req.body.userId;
+	const password = req.body.password;
+	const token = req.body.token;
+
+	const user = await User.findOne({
+		resetToken: token,
+		resetTokenExpiration: { $gt: Date.now() },
+		_id: userId,
 	});
+
+	(user as any).password = await hash(password, 12);
+	(user as any).resetToken = null;
+	(user as any).resetTokenExpiration = null;
+
+	await user?.save();
+	console.log('Password Changed Successfully...');
+	res.redirect('/login');
 };
