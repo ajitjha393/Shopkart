@@ -1,6 +1,6 @@
-import { RequestHandler } from 'express';
-import Product from '../models/product';
-import { ObjectId } from 'mongodb';
+import { RequestHandler } from 'express'
+import Product from '../models/product'
+import { ObjectId } from 'mongodb'
 
 export const getAddProduct: RequestHandler = (req, res, _next) => {
 	res.render('admin/edit-product', {
@@ -8,8 +8,8 @@ export const getAddProduct: RequestHandler = (req, res, _next) => {
 		path: '/admin/add-product',
 		editing: false,
 		// isAuthenticated: req.session!.isLoggedIn,
-	});
-};
+	})
+}
 
 export const postAddProduct: RequestHandler = async (req, res, _next) => {
 	try {
@@ -19,28 +19,28 @@ export const postAddProduct: RequestHandler = async (req, res, _next) => {
 			price: +req.body.price,
 			imageUrl: req.body.imageUrl,
 			userId: req.user,
-		});
+		})
 
-		await product.save();
-		console.log('Product Created....');
+		await product.save()
+		console.log('Product Created....')
 	} catch (err) {
-		console.log(err);
+		console.log(err)
 	}
-	res.redirect('/');
-};
+	res.redirect('/')
+}
 
 export const getEditProduct: RequestHandler = async (req, res, _next) => {
-	const editMode = req.query.edit;
+	const editMode = req.query.edit
 
 	if (!editMode) {
-		return res.redirect('/');
+		return res.redirect('/')
 	}
 
-	const prodId = req.params.productId;
-	const product = await Product.findById(prodId);
-	console.log('Edit Mode');
+	const prodId = req.params.productId
+	const product = await Product.findById(prodId)
+	console.log('Edit Mode')
 	if (!product) {
-		return res.redirect('/404');
+		return res.redirect('/404')
 	}
 
 	res.render('admin/edit-product', {
@@ -49,8 +49,8 @@ export const getEditProduct: RequestHandler = async (req, res, _next) => {
 		editing: editMode,
 		product,
 		// isAuthenticated: req.session!.isLoggedIn,
-	});
-};
+	})
+}
 
 export const postEditProduct: RequestHandler = async (req, res, _next) => {
 	const updatedProduct = {
@@ -59,43 +59,43 @@ export const postEditProduct: RequestHandler = async (req, res, _next) => {
 		price: +req.body.price,
 		imageUrl: req.body.imageUrl,
 		userId: req.user._id,
-	};
+	}
 
-	const product: any = await Product.findById(req.body.productId);
+	const product: any = await Product.findById(req.body.productId)
 	if (product.userId.toString() !== req.user._id.toString()) {
-		console.log('You do not have authorization to edit this product...');
-		return res.redirect('/');
+		console.log('You do not have authorization to edit this product...')
+		return res.redirect('/')
 	} else {
-		(product.title = updatedProduct.title),
+		;(product.title = updatedProduct.title),
 			(product.description = updatedProduct.description),
 			(product.price = updatedProduct.price),
 			(product.imageUrl = updatedProduct.imageUrl),
-			await product.save();
+			await product.save()
 
-		console.log('Product Updated ....');
+		console.log('Product Updated ....')
 
-		res.redirect('/admin/products');
+		res.redirect('/admin/products')
 	}
 	// await Product.replaceOne(
 	// 	{ _id: new ObjectId(req.body.productId) },
 	// 	updatedProduct
 	// );
-};
+}
 
 export const getProducts: RequestHandler = async (req, res, _next) => {
-	const products = await Product.find({ userId: req.user._id });
+	const products = await Product.find({ userId: req.user._id })
 
 	res.render('admin/products', {
 		products,
 		path: '/admin/products',
 		pageTitle: 'Admin Products',
-	});
-};
+	})
+}
 
 export const deleteProduct: RequestHandler = async (req, res, _next) => {
-	const prodId = req.body.productId;
+	const prodId = req.body.productId
 
-	await Product.deleteOne({ _id: prodId, userId: req.user._id });
-	console.log('Product Deleted ....');
-	res.redirect('/admin/products');
-};
+	await Product.deleteOne({ _id: prodId, userId: req.user._id })
+	console.log('Product Deleted ....')
+	res.redirect('/admin/products')
+}

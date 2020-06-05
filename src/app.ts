@@ -1,38 +1,38 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import path from 'path';
-import rootDir from './utils/rootDir';
-import adminRoutes from './routes/admin';
-import shopRoutes from './routes/shop';
-import authRoutes from './routes/auth';
-import { get404Page } from './controllers/error';
-import { credentials } from './utils/credentials';
-import { connect } from 'mongoose';
-import User from './models/user';
-import session from 'express-session';
-import cms from 'connect-mongodb-session';
-import csrf from 'csurf';
-import flash from 'connect-flash';
-const app = express();
+import express from 'express'
+import bodyParser from 'body-parser'
+import path from 'path'
+import rootDir from './utils/rootDir'
+import adminRoutes from './routes/admin'
+import shopRoutes from './routes/shop'
+import authRoutes from './routes/auth'
+import { get404Page } from './controllers/error'
+import { credentials } from './utils/credentials'
+import { connect } from 'mongoose'
+import User from './models/user'
+import session from 'express-session'
+import cms from 'connect-mongodb-session'
+import csrf from 'csurf'
+import flash from 'connect-flash'
+const app = express()
 
-const MongoDBStore = cms(session);
+const MongoDBStore = cms(session)
 const store = new MongoDBStore({
 	uri: credentials,
 	collection: 'sessions',
-});
+})
 
-const csrfProtection = csrf();
-app.set('view engine', 'ejs');
-app.set('views', 'views');
+const csrfProtection = csrf()
+app.set('view engine', 'ejs')
+app.set('views', 'views')
 
 app.use(
 	bodyParser.urlencoded({
 		extended: false,
 	})
-);
+)
 
 // Serving static files
-app.use(express.static(path.join(rootDir, '..', 'public')));
+app.use(express.static(path.join(rootDir, '..', 'public')))
 
 // Custom middleware
 
@@ -43,42 +43,41 @@ app.use(
 		saveUninitialized: false,
 		store: store,
 	})
-);
+)
 
 app.use(async (req, _res, next) => {
 	if (req.session!.user) {
-		req.user = await User.findById(req.session!.user._id);
+		req.user = await User.findById(req.session!.user._id)
 	}
 
-	next();
-});
+	next()
+})
 
-app.use(csrfProtection);
-app.use(flash());
+app.use(csrfProtection)
+app.use(flash())
 // use is for all actions and acts as prefix
 
 // Passing local variables to the views
 app.use((req, res, next) => {
-	res.locals.isAuthenticated = req.session!.isLoggedIn;
+	res.locals.isAuthenticated = req.session!.isLoggedIn
 
-	res.locals.csrfToken = req.csrfToken();
-	next();
-});
-app.use('/admin', adminRoutes);
-app.use(shopRoutes);
-app.use(authRoutes);
+	res.locals.csrfToken = req.csrfToken()
+	next()
+})
+app.use('/admin', adminRoutes)
+app.use(shopRoutes)
+app.use(authRoutes)
 
 // 404 Error
-app.use(get404Page);
-
-(async () => {
+app.use(get404Page)
+;(async () => {
 	try {
-		await connect(credentials);
-		console.clear();
+		await connect(credentials)
+		console.clear()
 
-		app.listen(3000);
-		console.log('Connected.............');
+		app.listen(3000)
+		console.log('Connected.............')
 	} catch (err) {
-		console.log('Error while connecting to DB');
+		console.log('Error while connecting to DB')
 	}
-})();
+})()

@@ -1,9 +1,9 @@
-import { RequestHandler } from 'express';
+import { RequestHandler } from 'express'
 
 export const isAuth: RequestHandler = async (req, res, next) => {
 	if (!req.session!.isLoggedIn) {
-		console.log('Please Login...');
-		return res.redirect('/login');
+		console.log('Please Login...')
+		return res.redirect('/login')
 	}
-	next();
-};
+	next()
+}
