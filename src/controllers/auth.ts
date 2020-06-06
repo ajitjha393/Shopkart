@@ -53,7 +53,7 @@ export const getSignup: RequestHandler = (req, res, _next) => {
 export const postSignup: RequestHandler = async (req, res, _next) => {
 	const email = req.body.email
 	const password = req.body.password
-	const confirmPassword = req.body.confirmPassword
+
 	const errors = validationResult(req)
 	if (!errors.isEmpty()) {
 		return res.status(422).render('auth/signup', {
@@ -61,36 +61,28 @@ export const postSignup: RequestHandler = async (req, res, _next) => {
 			pageTitle: 'Signup',
 			errorMessage: errors.array()[0].msg,
 		})
-	} else {
 	}
 
-	// Check if email exists in DB
-	const user = await User.findOne({ email: email })
-	if (user) {
-		req.flash('error', 'Email already exists, pick different one')
-		req.session?.save((_) => res.redirect('/signup'))
-	} else {
-		const user = new User({
-			email: email,
-			password: await hash(password, 12),
-			cart: { items: [] },
+	const user = new User({
+		email: email,
+		password: await hash(password, 12),
+		cart: { items: [] },
+	})
+
+	await user.save()
+	res.redirect('/login')
+	try {
+		await MailService.sendMail({
+			to: email,
+			from: 'nodeshop393@gmail.com',
+			subject: 'Regarding Signup',
+			html: '<strong>Account successfully Created...</strong>',
 		})
 
-		await user.save()
-		res.redirect('/login')
-		try {
-			await MailService.sendMail({
-				to: email,
-				from: 'nodeshop393@gmail.com',
-				subject: 'Regarding Signup',
-				html: '<strong>Account successfully Created...</strong>',
-			})
-
-			console.log('Email Sent...')
-		} catch (err) {
-			console.log('Error in sending mail...')
-			console.log(err.response.body)
-		}
+		console.log('Email Sent...')
+	} catch (err) {
+		console.log('Error in sending mail...')
+		console.log(err.response.body)
 	}
 }
 
