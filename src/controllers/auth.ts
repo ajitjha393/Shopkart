@@ -4,6 +4,7 @@ import { hash, compare } from 'bcryptjs'
 import { getErrorMessage } from '../utils/getFlashError'
 import { MailService } from '../utils/MailService'
 import { randomBytes } from 'crypto'
+import { validationResult } from 'express-validator'
 
 export const getLoginPage: RequestHandler = (req, res, _next) => {
 	res.render('auth/login', {
@@ -53,6 +54,15 @@ export const postSignup: RequestHandler = async (req, res, _next) => {
 	const email = req.body.email
 	const password = req.body.password
 	const confirmPassword = req.body.confirmPassword
+	const errors = validationResult(req)
+	if (!errors.isEmpty()) {
+		return res.status(422).render('auth/signup', {
+			path: 'signup',
+			pageTitle: 'Signup',
+			errorMessage: errors.array()[0].msg,
+		})
+	} else {
+	}
 
 	// Check if email exists in DB
 	const user = await User.findOne({ email: email })

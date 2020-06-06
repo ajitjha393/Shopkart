@@ -10,6 +10,7 @@ import {
 	getNewPassword,
 	postNewPassword,
 } from '../controllers/auth'
+import { body } from 'express-validator'
 
 const router = Router()
 
@@ -17,7 +18,11 @@ router.get('/login', getLoginPage)
 router.post('/login', postLogin)
 
 router.get('/signup', getSignup)
-router.post('/signup', postSignup)
+router.post(
+	'/signup',
+	body('email').isEmail().withMessage('Please Enter A Valid Email '),
+	postSignup
+)
 
 router.post('/logout', postLogout)
 
