@@ -15,6 +15,7 @@ export const getLoginPage: RequestHandler = (req, res, _next) => {
 			email: '',
 			password: '',
 		},
+		validationErrors: [],
 	})
 }
 
@@ -32,6 +33,7 @@ export const postLogin: RequestHandler = async (req, res, _next) => {
 				email: email,
 				password: password,
 			},
+			validationErrors: errors.array(),
 		})
 	}
 
@@ -64,6 +66,7 @@ export const getSignup: RequestHandler = (req, res, _next) => {
 			password: '',
 			confirmPassword: '',
 		},
+		validationErrors: [],
 	})
 }
 
@@ -82,6 +85,7 @@ export const postSignup: RequestHandler = async (req, res, _next) => {
 				password: password,
 				confirmPassword: req.body.confirmPassword,
 			},
+			validationErrors: errors.array(),
 		})
 	}
 
