@@ -28,12 +28,14 @@ router.post(
 					throw new Error('Email Id does not exists...')
 				}
 				return true
-			}),
+			})
+			.normalizeEmail(),
 		body('password')
 			.isLength({ min: 5 })
 			.withMessage('Password must be of atleast 5 characters ')
 			.isAlphanumeric()
-			.withMessage('Password must contain only Alphanumeric Character '),
+			.withMessage('Password must contain only Alphanumeric Character ')
+			.trim(),
 	],
 	postLogin
 )
@@ -54,12 +56,14 @@ router.post(
 					)
 				}
 				return true
-			}),
+			})
+			.normalizeEmail(),
 		body('password')
 			.isLength({ min: 5 })
 			.withMessage('Password must be of atleast 5 characters ')
 			.isAlphanumeric()
-			.withMessage('Password must contain only Alphanumeric Character '),
+			.withMessage('Password must contain only Alphanumeric Character ')
+			.trim(),
 		body('confirmPassword').custom((value, { req }) => {
 			if (value !== req.body.password) {
 				throw new Error('Passwords Do not Match...')
