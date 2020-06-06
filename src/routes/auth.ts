@@ -19,7 +19,16 @@ router.get('/login', getLoginPage)
 router.post(
 	'/login',
 	[
-		body('email').isEmail().withMessage('Please Enter A Valid Email'),
+		body('email')
+			.isEmail()
+			.withMessage('Please Enter A Valid Email')
+			.custom(async (value) => {
+				const user = await User.findOne({ email: value })
+				if (!user) {
+					throw new Error('Email Id does not exists...')
+				}
+				return true
+			}),
 		body('password')
 			.isLength({ min: 5 })
 			.withMessage('Password must be of atleast 5 characters ')

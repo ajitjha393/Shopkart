@@ -11,13 +11,16 @@ export const getLoginPage: RequestHandler = (req, res, _next) => {
 		path: '/login',
 		pageTitle: 'Login',
 		errorMessage: getErrorMessage(req),
+		oldInput: {
+			email: '',
+			password: '',
+		},
 	})
 }
 
 export const postLogin: RequestHandler = async (req, res, _next) => {
 	const email = req.body.email
 	const password = req.body.password
-	const user = await User.findOne({ email: email })
 
 	const errors = validationResult(req)
 	if (!errors.isEmpty()) {
@@ -25,22 +28,22 @@ export const postLogin: RequestHandler = async (req, res, _next) => {
 			path: 'login',
 			pageTitle: 'Login',
 			errorMessage: errors.array()[0].msg,
+			oldInput: {
+				email: email,
+				password: password,
+			},
 		})
 	}
 
-	if (!user) {
-		req.flash('error', 'Invalid Email or password!')
-		// Some times it take time to save in session hence its good to use callbac format like this
-		req.session?.save((_) => res.redirect('/login'))
+	const user = await User.findOne({ email: email })
+
+	if (await compare(password, (user as any).password)) {
+		req.session!.user = user
+		req.session!.isLoggedIn = true
+		req.session?.save((_) => res.redirect('/'))
 	} else {
-		if (await compare(password, (user as any).password)) {
-			req.session!.user = user
-			req.session!.isLoggedIn = true
-			req.session?.save((_) => res.redirect('/'))
-		} else {
-			req.flash('error', 'Invalid Email or password!')
-			req.session?.save((_) => res.redirect('/login'))
-		}
+		req.flash('error', 'Incorrect Password!')
+		req.session?.save((_) => res.redirect('/login'))
 	}
 }
 
