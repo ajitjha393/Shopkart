@@ -16,7 +16,18 @@ import User from '../models/user'
 const router = Router()
 
 router.get('/login', getLoginPage)
-router.post('/login', postLogin)
+router.post(
+	'/login',
+	[
+		body('email').isEmail().withMessage('Please Enter A Valid Email'),
+		body('password')
+			.isLength({ min: 5 })
+			.withMessage('Password must be of atleast 5 characters ')
+			.isAlphanumeric()
+			.withMessage('Password must contain only Alphanumeric Character '),
+	],
+	postLogin
+)
 
 router.get('/signup', getSignup)
 

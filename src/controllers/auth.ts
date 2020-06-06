@@ -19,6 +19,15 @@ export const postLogin: RequestHandler = async (req, res, _next) => {
 	const password = req.body.password
 	const user = await User.findOne({ email: email })
 
+	const errors = validationResult(req)
+	if (!errors.isEmpty()) {
+		return res.status(422).render('auth/login', {
+			path: 'login',
+			pageTitle: 'Login',
+			errorMessage: errors.array()[0].msg,
+		})
+	}
+
 	if (!user) {
 		req.flash('error', 'Invalid Email or password!')
 		// Some times it take time to save in session hence its good to use callbac format like this
@@ -47,6 +56,11 @@ export const getSignup: RequestHandler = (req, res, _next) => {
 		path: 'signup',
 		pageTitle: 'Signup',
 		errorMessage: getErrorMessage(req),
+		oldInput: {
+			email: '',
+			password: '',
+			confirmPassword: '',
+		},
 	})
 }
 
@@ -60,6 +74,11 @@ export const postSignup: RequestHandler = async (req, res, _next) => {
 			path: 'signup',
 			pageTitle: 'Signup',
 			errorMessage: errors.array()[0].msg,
+			oldInput: {
+				email: email,
+				password: password,
+				confirmPassword: req.body.confirmPassword,
+			},
 		})
 	}
 
