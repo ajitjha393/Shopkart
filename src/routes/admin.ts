@@ -7,6 +7,7 @@ import {
 	postEditProduct,
 	deleteProduct,
 } from '../controllers/admin'
+import { body } from 'express-validator'
 
 import { isAuth } from '../middleware/isAuth'
 
@@ -16,10 +17,46 @@ router.get('/add-product', isAuth, getAddProduct)
 
 router.get('/products', isAuth, getProducts)
 
-router.post('/add-product', isAuth, postAddProduct)
+router.post(
+	'/add-product',
+	isAuth,
+	[
+		body('title')
+			.isString()
+			.isLength({ min: 3 })
+			.withMessage('Title must have a minimum length of 3')
+			.trim(),
+
+		body('imageUrl').isURL().withMessage('Please enter a valid Url!'),
+		body('price').isFloat(),
+		body('description')
+			.isLength({ min: 4, max: 500 })
+			.withMessage('Please provide a description for the product ')
+			.trim(),
+	],
+	postAddProduct
+)
 
 router.get('/edit-product/:productId', isAuth, getEditProduct)
-router.post('/edit-product', isAuth, postEditProduct)
+router.post(
+	'/edit-product',
+	isAuth,
+	[
+		body('title')
+			.isString()
+			.isLength({ min: 3 })
+			.withMessage('Title must have a minimum length of 3')
+			.trim(),
+
+		body('imageUrl').isURL().withMessage('Please enter a valid Url!'),
+		body('price').isFloat(),
+		body('description')
+			.isLength({ min: 4, max: 500 })
+			.withMessage('Please provide a description for the product ')
+			.trim(),
+	],
+	postEditProduct
+)
 
 router.post('/delete-product', isAuth, deleteProduct)
 export default router

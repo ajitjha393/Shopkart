@@ -1,18 +1,39 @@
 import { RequestHandler } from 'express'
 import Product from '../models/product'
-import { ObjectId } from 'mongodb'
+import { validationResult } from 'express-validator'
 
 export const getAddProduct: RequestHandler = (req, res, _next) => {
 	res.render('admin/edit-product', {
 		pageTitle: 'Add Product',
 		path: '/admin/add-product',
 		editing: false,
+		hasError: false,
+		errorMessage: null,
 		// isAuthenticated: req.session!.isLoggedIn,
 	})
 }
 
 export const postAddProduct: RequestHandler = async (req, res, _next) => {
 	try {
+		const errors = validationResult(req)
+		if (!errors.isEmpty()) {
+			res.status(422).render('admin/edit-product', {
+				pageTitle: 'Add Product',
+				path: '/admin/edit-product',
+				editing: false,
+				hasError: true,
+				product: {
+					title: req.body.title,
+					description: req.body.description,
+					price: +req.body.price,
+					imageUrl: req.body.imageUrl,
+					userId: req.user,
+				},
+				errorMessage: errors.array()[0].msg,
+				// isAuthenticated: req.session!.isLoggedIn,
+			})
+		}
+
 		const product = new Product({
 			title: req.body.title,
 			description: req.body.description,
@@ -48,6 +69,8 @@ export const getEditProduct: RequestHandler = async (req, res, _next) => {
 		path: '/admin/edit-product',
 		editing: editMode,
 		product,
+		hasError: false,
+		errorMessage: null,
 		// isAuthenticated: req.session!.isLoggedIn,
 	})
 }
