@@ -22,17 +22,17 @@ router.post(
 	isAuth,
 	[
 		body('title')
+			.trim()
 			.isString()
 			.isLength({ min: 3 })
-			.withMessage('Title must have a minimum length of 3')
-			.trim(),
+			.withMessage('Title must have a minimum length of 3'),
 
 		body('imageUrl').isURL().withMessage('Please enter a valid Url!'),
 		body('price').isFloat(),
 		body('description')
+			.trim()
 			.isLength({ min: 4, max: 500 })
-			.withMessage('Please provide a description for the product ')
-			.trim(),
+			.withMessage('Please provide a description for the product '),
 	],
 	postAddProduct
 )
@@ -43,17 +43,17 @@ router.post(
 	isAuth,
 	[
 		body('title')
+			.trim()
 			.isString()
 			.isLength({ min: 3 })
-			.withMessage('Title must have a minimum length of 3')
-			.trim(),
+			.withMessage('Title must have a minimum length of 3'),
 
 		body('imageUrl').isURL().withMessage('Please enter a valid Url!'),
 		body('price').isFloat(),
 		body('description')
+			.trim()
 			.isLength({ min: 4, max: 500 })
-			.withMessage('Please provide a description for the product ')
-			.trim(),
+			.withMessage('Please provide a description for the product '),
 	],
 	postEditProduct
 )

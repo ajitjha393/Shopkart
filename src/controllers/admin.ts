@@ -9,6 +9,7 @@ export const getAddProduct: RequestHandler = (req, res, _next) => {
 		editing: false,
 		hasError: false,
 		errorMessage: null,
+		validationErrors: [],
 		// isAuthenticated: req.session!.isLoggedIn,
 	})
 }
@@ -17,7 +18,7 @@ export const postAddProduct: RequestHandler = async (req, res, _next) => {
 	try {
 		const errors = validationResult(req)
 		if (!errors.isEmpty()) {
-			res.status(422).render('admin/edit-product', {
+			return res.status(422).render('admin/edit-product', {
 				pageTitle: 'Add Product',
 				path: '/admin/edit-product',
 				editing: false,
@@ -30,6 +31,7 @@ export const postAddProduct: RequestHandler = async (req, res, _next) => {
 					userId: req.user,
 				},
 				errorMessage: errors.array()[0].msg,
+				validationErrors: errors.array(),
 				// isAuthenticated: req.session!.isLoggedIn,
 			})
 		}
@@ -71,6 +73,7 @@ export const getEditProduct: RequestHandler = async (req, res, _next) => {
 		product,
 		hasError: false,
 		errorMessage: null,
+		validationErrors: [],
 		// isAuthenticated: req.session!.isLoggedIn,
 	})
 }
@@ -82,6 +85,26 @@ export const postEditProduct: RequestHandler = async (req, res, _next) => {
 		price: +req.body.price,
 		imageUrl: req.body.imageUrl,
 		userId: req.user._id,
+	}
+
+	const errors = validationResult(req)
+	if (!errors.isEmpty()) {
+		return res.status(422).render('admin/edit-product', {
+			pageTitle: 'Edit Product',
+			path: '/admin/edit-product',
+			editing: true,
+			hasError: true,
+			product: {
+				title: req.body.title,
+				description: req.body.description,
+				price: +req.body.price,
+				imageUrl: req.body.imageUrl,
+				_id: req.body.productId,
+			},
+			errorMessage: errors.array()[0].msg,
+			validationErrors: errors.array(),
+			// isAuthenticated: req.session!.isLoggedIn,
+		})
 	}
 
 	const product: any = await Product.findById(req.body.productId)
