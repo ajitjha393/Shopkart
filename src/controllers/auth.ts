@@ -124,7 +124,7 @@ export const postReset: RequestHandler = (req, res, _next) => {
 		res.redirect('/')
 		await MailService.sendMail({
 			to: email,
-			from: 'shop@node.com',
+			from: 'nodeshop393@gmail.com',
 			subject: 'Password Reset',
 			html: `
 				<h2> You requested a password Reset</h2>
