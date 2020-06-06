@@ -28,6 +28,12 @@ router.post(
 			.withMessage('Password must be of atleast 5 characters ')
 			.isAlphanumeric()
 			.withMessage('Password must contain only Alphanumeric Character '),
+		body('confirmPassword').custom((value, { req }) => {
+			if (value !== req.body.password) {
+				throw new Error('Passwords Do not Match...')
+			}
+			return true
+		}),
 	],
 	postSignup
 )
