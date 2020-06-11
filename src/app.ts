@@ -77,6 +77,18 @@ app.use('/500', get500Page)
 
 // 404 Error
 app.use(get404Page)
+
+// Express Error Middleware - Skips all other remaining middlewares
+app.use(
+	(
+		_error: Error,
+		_req: any,
+		res: { redirect: (arg0: string) => void },
+		_next: any
+	) => {
+		return res.redirect('/500')
+	}
+)
 ;(async () => {
 	try {
 		await connect(credentials)

@@ -14,7 +14,7 @@ export const getAddProduct: RequestHandler = (req, res, _next) => {
 	})
 }
 
-export const postAddProduct: RequestHandler = async (req, res, _next) => {
+export const postAddProduct: RequestHandler = async (req, res, next) => {
 	try {
 		const errors = validationResult(req)
 		if (!errors.isEmpty()) {
@@ -47,8 +47,13 @@ export const postAddProduct: RequestHandler = async (req, res, _next) => {
 		await product.save()
 		console.log('Product Created....')
 	} catch (err) {
-		console.log(err)
-		return res.redirect('/500')
+		// Good way
+		// console.log(err)
+		// return res.redirect('/500')
+
+		// Better way Using error middleware
+		//  new Error(err)
+		return next(new Error(err))
 	}
 	res.redirect('/')
 }
