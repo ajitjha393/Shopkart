@@ -27,7 +27,7 @@ router.post(
 			.isLength({ min: 3 })
 			.withMessage('Title must have a minimum length of 3'),
 
-		body('imageUrl').isURL().withMessage('Please enter a valid Url!'),
+		body('imageUrl') /*.isURL().withMessage('Please enter a valid Url!')*/,
 		body('price').isFloat(),
 		body('description')
 			.trim()
