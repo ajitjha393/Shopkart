@@ -90,7 +90,6 @@ export const postEditProduct: RequestHandler = async (req, res, _next) => {
 		title: req.body.title,
 		description: req.body.description,
 		price: +req.body.price,
-		imageUrl: req.body.imageUrl,
 		userId: req.user._id,
 	}
 
@@ -105,7 +104,6 @@ export const postEditProduct: RequestHandler = async (req, res, _next) => {
 				title: req.body.title,
 				description: req.body.description,
 				price: +req.body.price,
-				imageUrl: req.body.imageUrl,
 				_id: req.body.productId,
 			},
 			errorMessage: errors.array()[0].msg,
@@ -122,7 +120,7 @@ export const postEditProduct: RequestHandler = async (req, res, _next) => {
 		;(product.title = updatedProduct.title),
 			(product.description = updatedProduct.description),
 			(product.price = updatedProduct.price),
-			(product.imageUrl = updatedProduct.imageUrl),
+			req.file ? (product.imageUrl = req.file.path) : null,
 			await product.save()
 
 		console.log('Product Updated ....')
