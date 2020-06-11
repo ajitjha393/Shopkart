@@ -41,7 +41,7 @@ export const postAddProduct: RequestHandler = async (req, res, next) => {
 			title: req.body.title,
 			description: req.body.description,
 			price: +req.body.price,
-			imageUrl: req.file,
+			imageUrl: req.file.path, //This stores the path on our file system
 			userId: req.user,
 		})
 
