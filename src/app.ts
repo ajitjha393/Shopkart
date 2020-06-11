@@ -26,13 +26,23 @@ const csrfProtection = csrf()
 app.set('view engine', 'ejs')
 app.set('views', 'views')
 
+const fileStorage = multer.diskStorage({
+	destination: (_req, _file, cb) => {
+		cb(null, 'images')
+	},
+
+	filename: (_req, file, cb) => {
+		cb(null, new Date().toISOString() + '-' + file.originalname)
+	},
+})
+
 app.use(
 	bodyParser.urlencoded({
 		extended: false,
 	})
 )
 
-app.use(multer({ dest: 'images' }).single('image'))
+app.use(multer({ storage: fileStorage }).single('image'))
 
 // Serving static files
 app.use(express.static(path.join(rootDir, '..', 'public')))
