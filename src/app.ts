@@ -13,6 +13,7 @@ import session from 'express-session'
 import cms from 'connect-mongodb-session'
 import csrf from 'csurf'
 import flash from 'connect-flash'
+import multer from 'multer'
 const app = express()
 
 const MongoDBStore = cms(session)
@@ -30,6 +31,8 @@ app.use(
 		extended: false,
 	})
 )
+
+app.use(multer({ dest: 'images' }).single('image'))
 
 // Serving static files
 app.use(express.static(path.join(rootDir, '..', 'public')))
