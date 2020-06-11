@@ -42,7 +42,21 @@ app.use(
 	})
 )
 
-app.use(multer({ storage: fileStorage }).single('image'))
+app.use(
+	multer({
+		storage: fileStorage,
+		fileFilter: (_req, file, cb) => {
+			if (
+				file.mimetype === 'image/png' ||
+				file.mimetype === 'image/jpg' ||
+				file.mimetype === 'image/jpeg'
+			) {
+				return cb(null, true)
+			}
+			cb(null, false)
+		},
+	}).single('image')
+)
 
 // Serving static files
 app.use(express.static(path.join(rootDir, '..', 'public')))
