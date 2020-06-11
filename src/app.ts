@@ -46,8 +46,12 @@ app.use(
 )
 
 app.use(async (req, _res, next) => {
-	if (req.session!.user) {
-		req.user = await User.findById(req.session!.user._id)
+	try {
+		if (req.session!.user) {
+			req.user = await User.findById(req.session!.user._id)
+		}
+	} catch (err) {
+		throw new Error(err)
 	}
 
 	next()
