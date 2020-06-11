@@ -17,7 +17,7 @@ export const getAddProduct: RequestHandler = (req, res, _next) => {
 export const postAddProduct: RequestHandler = async (req, res, next) => {
 	try {
 		const errors = validationResult(req)
-		if (!errors.isEmpty()) {
+		if (!errors.isEmpty() || !req.file) {
 			return res.status(422).render('admin/edit-product', {
 				pageTitle: 'Add Product',
 				path: '/admin/edit-product',
@@ -27,11 +27,12 @@ export const postAddProduct: RequestHandler = async (req, res, next) => {
 					title: req.body.title,
 					description: req.body.description,
 					price: +req.body.price,
-					imageUrl: req.file,
 					userId: req.user,
 				},
-				errorMessage: errors.array()[0].msg,
-				validationErrors: errors.array(),
+				errorMessage: req.file
+					? errors.array()[0].msg
+					: 'Attached File is not an image',
+				validationErrors: req.file ? errors.array() : [],
 				// isAuthenticated: req.session!.isLoggedIn,
 			})
 		}
