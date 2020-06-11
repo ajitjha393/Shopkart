@@ -27,7 +27,7 @@ export const postAddProduct: RequestHandler = async (req, res, next) => {
 					title: req.body.title,
 					description: req.body.description,
 					price: +req.body.price,
-					imageUrl: req.body.image,
+					imageUrl: req.file,
 					userId: req.user,
 				},
 				errorMessage: errors.array()[0].msg,
@@ -40,7 +40,7 @@ export const postAddProduct: RequestHandler = async (req, res, next) => {
 			title: req.body.title,
 			description: req.body.description,
 			price: +req.body.price,
-			imageUrl: req.body.imageUrl,
+			imageUrl: req.file,
 			userId: req.user,
 		})
 
