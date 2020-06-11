@@ -5,7 +5,7 @@ import rootDir from './utils/rootDir'
 import adminRoutes from './routes/admin'
 import shopRoutes from './routes/shop'
 import authRoutes from './routes/auth'
-import { get404Page } from './controllers/error'
+import { get404Page, get500Page } from './controllers/error'
 import { credentials } from './utils/credentials'
 import { connect } from 'mongoose'
 import User from './models/user'
@@ -71,6 +71,9 @@ app.use((req, res, next) => {
 app.use('/admin', adminRoutes)
 app.use(shopRoutes)
 app.use(authRoutes)
+
+//500  error
+app.use('/500', get500Page)
 
 // 404 Error
 app.use(get404Page)
