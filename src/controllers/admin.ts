@@ -48,6 +48,7 @@ export const postAddProduct: RequestHandler = async (req, res, _next) => {
 		console.log('Product Created....')
 	} catch (err) {
 		console.log(err)
+		return res.redirect('/500')
 	}
 	res.redirect('/')
 }
