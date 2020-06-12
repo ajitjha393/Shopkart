@@ -5,6 +5,7 @@ import rootDir from '../utils/rootDir'
 import path from 'path'
 import fs from 'fs'
 import PDFDocument from 'pdfkit'
+import order from '../models/order'
 
 export const getIndexPage: RequestHandler = async (req, res, _next) => {
 	const products = await Product.find()
@@ -134,16 +135,30 @@ export const getInvoice: RequestHandler = async (req, res, next) => {
 		const pdfDoc = new PDFDocument()
 		pdfDoc.pipe(fs.createWriteStream(invoicePath))
 		pdfDoc.pipe(res)
-		pdfDoc.text('Hello World!')
-		pdfDoc.end()
 
-		// const file = fs.createReadStream(invoicePath)
-		// res.setHeader('Content-Type', 'application/pdf')
-		// res.setHeader(
-		// 	'Content-Disposition',
-		// 	`inline; filename="${invoiceName}"`
-		// )
-		// file.pipe(res)
+		pdfDoc.fontSize(26).text('Invoice', {
+			underline: true,
+		})
+
+		pdfDoc.text('\n')
+
+		// pdfDoc.text('---------------------------------')
+		let totalPrice = 0
+		;(orderDoc as any).products.forEach((prod: any) => {
+			pdfDoc
+				.fontSize(14)
+				.text(
+					`${prod.product.title} - ${prod.quantity} x $${prod.product.price}`
+				)
+
+			totalPrice += prod.quantity * prod.product.price
+		})
+		pdfDoc.text('----------------------------------------')
+		pdfDoc.text('\n')
+
+		pdfDoc.fontSize(20).text('Total Price: $' + totalPrice)
+
+		pdfDoc.end()
 	} catch (err) {
 		return next(err)
 	}
