@@ -4,4 +4,3 @@ dist
 node_modules
 /data
 /src/utils/credentials.ts
-/images
