@@ -60,6 +60,7 @@ app.use(
 
 // Serving static files
 app.use(express.static(path.join(rootDir, '..', 'public')))
+app.use('/images', express.static(path.join(rootDir, '..', 'images')))
 
 // Custom middleware
 
