@@ -4,6 +4,7 @@ import Order from '../models/order'
 import rootDir from '../utils/rootDir'
 import path from 'path'
 import fs from 'fs'
+import PDFDocument from 'pdfkit'
 
 export const getIndexPage: RequestHandler = async (req, res, _next) => {
 	const products = await Product.find()
@@ -124,25 +125,25 @@ export const getInvoice: RequestHandler = async (req, res, next) => {
 			'invoices',
 			invoiceName
 		)
-		// fs.readFile(invoicePath, (err, data) => {
-		// 	if (err) {
-		// 		return next(err)
-		// 	}
-		// 	res.setHeader('Content-Type', 'application/pdf')
-		// 	res.setHeader(
-		// 		'Content-Disposition',
-		// 		`inline; filename="${invoiceName}"`
-		// 	)
-		// 	res.send(data)
-		// })
 
-		const file = fs.createReadStream(invoicePath)
 		res.setHeader('Content-Type', 'application/pdf')
 		res.setHeader(
 			'Content-Disposition',
 			`inline; filename="${invoiceName}"`
 		)
-		file.pipe(res)
+		const pdfDoc = new PDFDocument()
+		pdfDoc.pipe(fs.createWriteStream(invoicePath))
+		pdfDoc.pipe(res)
+		pdfDoc.text('Hello World!')
+		pdfDoc.end()
+
+		// const file = fs.createReadStream(invoicePath)
+		// res.setHeader('Content-Type', 'application/pdf')
+		// res.setHeader(
+		// 	'Content-Disposition',
+		// 	`inline; filename="${invoiceName}"`
+		// )
+		// file.pipe(res)
 	} catch (err) {
 		return next(err)
 	}
