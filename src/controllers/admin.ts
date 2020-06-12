@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express'
 import Product from '../models/product'
 import { validationResult } from 'express-validator'
+import { deleteFile } from '../utils/fileUtility'
 
 export const getAddProduct: RequestHandler = (req, res, _next) => {
 	res.render('admin/edit-product', {
@@ -117,6 +118,10 @@ export const postEditProduct: RequestHandler = async (req, res, _next) => {
 		console.log('You do not have authorization to edit this product...')
 		return res.redirect('/')
 	} else {
+		if (req.file) {
+			deleteFile(product.imageUrl)
+			product.imageUrl = req.file.path
+		}
 		;(product.title = updatedProduct.title),
 			(product.description = updatedProduct.description),
 			(product.price = updatedProduct.price),
@@ -143,8 +148,13 @@ export const getProducts: RequestHandler = async (req, res, _next) => {
 	})
 }
 
-export const deleteProduct: RequestHandler = async (req, res, _next) => {
+export const deleteProduct: RequestHandler = async (req, res, next) => {
 	const prodId = req.body.productId
+	const productDoc = await Product.findById(prodId)
+	if (!productDoc) {
+		return next(new Error('Product not Found.'))
+	}
+	deleteFile((productDoc as any).imageUrl)
 
 	await Product.deleteOne({ _id: prodId, userId: req.user._id })
 	console.log('Product Deleted ....')
