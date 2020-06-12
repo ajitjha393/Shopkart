@@ -4,6 +4,7 @@ import Order from '../models/order'
 import rootDir from '../utils/rootDir'
 import path from 'path'
 import fs from 'fs'
+import order from '../models/order'
 export const getIndexPage: RequestHandler = async (req, res, _next) => {
 	const products = await Product.find()
 	console.log('Products Fetched....')
@@ -103,27 +104,40 @@ export const postOrder: RequestHandler = async (req, res, _next) => {
 	res.redirect('/orders')
 }
 
-export const getInvoice: RequestHandler = (req, res, next) => {
-	const orderId = req.params.orderId
-	const invoiceName = 'invoice-' + orderId + '.pdf'
-	const invoicePath = path.join(
-		rootDir,
-		'..',
-		'data',
-		'invoices',
-		invoiceName
-	)
-	fs.readFile(invoicePath, (err, data) => {
-		if (err) {
-			return next(err)
+export const getInvoice: RequestHandler = async (req, res, next) => {
+	try {
+		const orderId = req.params.orderId
+		const orderDoc = await Order.findById(orderId)
+		if (!orderDoc) {
+			return next(new Error('Order Not Found...'))
 		}
-		res.setHeader('Content-Type', 'application/pdf')
-		res.setHeader(
-			'Content-Disposition',
-			`inline; filename="${invoiceName}"`
+		if (
+			(orderDoc as any).user.userId.toString() !== req.user._id.toString()
+		) {
+			return next(new Error('You r unauthorized...'))
+		}
+		const invoiceName = 'invoice-' + orderId + '.pdf'
+		const invoicePath = path.join(
+			rootDir,
+			'..',
+			'data',
+			'invoices',
+			invoiceName
 		)
-		res.send(data)
-	})
+		fs.readFile(invoicePath, (err, data) => {
+			if (err) {
+				return next(err)
+			}
+			res.setHeader('Content-Type', 'application/pdf')
+			res.setHeader(
+				'Content-Disposition',
+				`inline; filename="${invoiceName}"`
+			)
+			res.send(data)
+		})
+	} catch (err) {
+		return next(err)
+	}
 }
 
 // // export const getCheckoutPage: RequestHandler = async (_req, res, _next) => {
