@@ -4,7 +4,7 @@ import Order from '../models/order'
 import rootDir from '../utils/rootDir'
 import path from 'path'
 import fs from 'fs'
-import order from '../models/order'
+
 export const getIndexPage: RequestHandler = async (req, res, _next) => {
 	const products = await Product.find()
 	console.log('Products Fetched....')
