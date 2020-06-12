@@ -9,6 +9,7 @@ import {
 	getProductDetails,
 	postCart,
 	deleteCartProduct,
+	getInvoice,
 } from '../controllers/shop'
 
 import { isAuth } from '../middleware/isAuth'
@@ -27,6 +28,7 @@ router.post('/cart', isAuth, postCart)
 router.post('/cart-delete-item', isAuth, deleteCartProduct)
 
 router.get('/orders', isAuth, getOrders)
+router.get('/orders/:orderId', isAuth, getInvoice)
 router.post('/create-order', isAuth, postOrder)
 // // router.get('/checkout', getCheckoutPage);
 
