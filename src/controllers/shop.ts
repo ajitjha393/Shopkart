@@ -11,7 +11,8 @@ const ITEMS_PER_PAGE = 2
 export const getIndexPage: RequestHandler = async (req, res, _next) => {
 	const page = +req.query.page || 1
 
-	console.log(page)
+	const totalItems = await Product.find().countDocuments()
+
 	const products = await Product.find()
 		.skip((page - 1) * ITEMS_PER_PAGE)
 		.limit(ITEMS_PER_PAGE)
@@ -21,6 +22,12 @@ export const getIndexPage: RequestHandler = async (req, res, _next) => {
 		products,
 		path: '/',
 		pageTitle: 'Shop',
+		totalProducts: totalItems,
+		hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+		hasPreviousPage: page > 1,
+		nextPage: page + 1,
+		previousPage: page - 1,
+		lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
 	})
 }
 
