@@ -32,11 +32,24 @@ export const getIndexPage: RequestHandler = async (req, res, _next) => {
 }
 
 export const getProducts: RequestHandler = async (req, res, _next) => {
+	const page = +req.query.page || 1
+
+	const totalItems = await Product.find().countDocuments()
+
 	const products = await Product.find()
+		.skip((page - 1) * ITEMS_PER_PAGE)
+		.limit(ITEMS_PER_PAGE)
+
 	res.render('shop/product-list', {
 		products,
 		path: '/products',
 		pageTitle: 'All Products',
+		currentPage: page,
+		hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+		hasPreviousPage: page > 1,
+		nextPage: page + 1,
+		previousPage: page - 1,
+		lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
 		// isAuthenticated: req.session!.isLoggedIn,
 	})
 }
