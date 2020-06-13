@@ -7,8 +7,15 @@ import fs from 'fs'
 import PDFDocument from 'pdfkit'
 import order from '../models/order'
 
+const ITEMS_PER_PAGE = 2
 export const getIndexPage: RequestHandler = async (req, res, _next) => {
+	const page = +req.query.page || 1
+
+	console.log(page)
 	const products = await Product.find()
+		.skip((page - 1) * ITEMS_PER_PAGE)
+		.limit(ITEMS_PER_PAGE)
+
 	console.log('Products Fetched....')
 	res.render('shop/index', {
 		products,
