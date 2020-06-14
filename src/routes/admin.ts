@@ -58,5 +58,5 @@ router.post(
 	postEditProduct
 )
 
-router.post('/delete-product', isAuth, deleteProduct)
+router.delete('/product/:productId', isAuth, deleteProduct)
 export default router

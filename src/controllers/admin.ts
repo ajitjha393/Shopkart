@@ -149,14 +149,19 @@ export const getProducts: RequestHandler = async (req, res, _next) => {
 }
 
 export const deleteProduct: RequestHandler = async (req, res, next) => {
-	const prodId = req.body.productId
-	const productDoc = await Product.findById(prodId)
-	if (!productDoc) {
-		return next(new Error('Product not Found.'))
-	}
-	deleteFile((productDoc as any).imageUrl)
+	try {
+		const prodId = req.params.productId
+		const productDoc = await Product.findById(prodId)
+		if (!productDoc) {
+			return next(new Error('Product not Found.'))
+		}
+		deleteFile((productDoc as any).imageUrl)
 
-	await Product.deleteOne({ _id: prodId, userId: req.user._id })
-	console.log('Product Deleted ....')
-	res.redirect('/admin/products')
+		await Product.deleteOne({ _id: prodId, userId: req.user._id })
+		console.log('Product Deleted ....')
+		// res.redirect('/admin/products')
+		res.status(200).json({ message: 'Success!' })
+	} catch (err) {
+		res.status(500).json({ message: 'Deleting Product Failed!' })
+	}
 }
