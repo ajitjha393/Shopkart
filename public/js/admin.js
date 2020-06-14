@@ -36,16 +36,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var _this = this;
 var deleteProduct = function (btn) { return __awaiter(_this, void 0, void 0, function () {
-    var prodId, csrf, res, err_1;
+    var prodId, csrf, productElement, res, data, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 console.log('clicked');
                 prodId = btn.parentNode.querySelector('[name=productId]').value;
                 csrf = btn.parentNode.querySelector('[name=_csrf]').value;
+                productElement = btn.closest('article');
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 3, , 4]);
+                _a.trys.push([1, 4, , 5]);
                 return [4 /*yield*/, fetch("/admin/product/" + prodId, {
                         method: 'DELETE',
                         headers: {
@@ -55,12 +56,16 @@ var deleteProduct = function (btn) { return __awaiter(_this, void 0, void 0, fun
             case 2:
                 res = _a.sent();
                 console.log(res);
-                return [3 /*break*/, 4];
+                return [4 /*yield*/, res.json()];
             case 3:
+                data = _a.sent();
+                productElement.remove();
+                return [3 /*break*/, 5];
+            case 4:
                 err_1 = _a.sent();
                 console.log(err_1);
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
         }
     });
 }); };

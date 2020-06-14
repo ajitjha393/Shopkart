@@ -9,6 +9,8 @@ const deleteProduct = async (btn: HTMLButtonElement) => {
 		'[name=_csrf]'
 	) as HTMLInputElement).value
 
+	const productElement = btn.closest('article')
+
 	try {
 		const res = await fetch(`/admin/product/${prodId}`, {
 			method: 'DELETE',
@@ -18,6 +20,8 @@ const deleteProduct = async (btn: HTMLButtonElement) => {
 		})
 
 		console.log(res)
+		const data = await res.json()
+		productElement.remove()
 	} catch (err) {
 		console.log(err)
 	}
