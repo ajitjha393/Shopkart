@@ -12,7 +12,7 @@ const stripe = new stripeFn(STRIPE_SECRET_KEY, {
 	apiVersion: '2020-03-02',
 })
 
-const ITEMS_PER_PAGE = 2
+const ITEMS_PER_PAGE = 4
 export const getIndexPage: RequestHandler = async (req, res, _next) => {
 	const page = +req.query.page || 1
 
