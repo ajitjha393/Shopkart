@@ -1,6 +1,7 @@
 .vscode
 .prettierignore
-dist
+#dist
+src
 node_modules
 /data
 # /src/utils/credentials.ts
