@@ -122,7 +122,7 @@ app.use(
 		await connect(credentials)
 		console.clear()
 
-		app.listen(3000)
+		app.listen(process.env.PORT || 3000)
 		console.log('Connected.............')
 	} catch (err) {
 		console.log('Error while connecting to DB')
