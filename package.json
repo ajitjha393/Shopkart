@@ -10,7 +10,8 @@
 	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "nodemon dist/app.js",
+		"start:dev": "nodemon dist/app.js",
+		"start": "node dist/app.js",
 		"kill": "kill -9 $(lsof -t -i tcp:3000)"
 	},
 	"author": "Bisu",
