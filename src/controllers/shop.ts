@@ -191,11 +191,19 @@ export const getInvoice: RequestHandler = async (req, res, next) => {
 	}
 }
 
-// // export const getCheckoutPage: RequestHandler = async (_req, res, _next) => {
-// // 	const products = await Product.findAll();
-// // 	res.render('shop/index', {
-// // 		products,
-// // 		path: '/checkout',
-// // 		pageTitle: 'Checkout',
-// // 	});
-// // };
+export const getCheckoutPage: RequestHandler = async (req, res, _next) => {
+	const user = await req.user.populate('cart.items.productId').execPopulate()
+	const cartProducts = user.cart.items
+
+	let total = 0
+	cartProducts.forEach((p: any) => {
+		total += p.quantity * p.productId.price
+	})
+
+	res.render('shop/checkout', {
+		products: cartProducts,
+		path: '/checkout',
+		pageTitle: 'Checkout',
+		totalSum: total,
+	})
+}

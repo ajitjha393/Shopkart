@@ -3,7 +3,7 @@ import {
 	getProducts,
 	getIndexPage,
 	getCart,
-	// 	// getCheckoutPage,
+	getCheckoutPage,
 	getOrders,
 	postOrder,
 	getProductDetails,
@@ -30,6 +30,6 @@ router.post('/cart-delete-item', isAuth, deleteCartProduct)
 router.get('/orders', isAuth, getOrders)
 router.get('/orders/:orderId', isAuth, getInvoice)
 router.post('/create-order', isAuth, postOrder)
-// // router.get('/checkout', getCheckoutPage);
+router.get('/checkout', isAuth, getCheckoutPage)
 
 export default router
