@@ -10,6 +10,7 @@ import {
 	postCart,
 	deleteCartProduct,
 	getInvoice,
+	getCheckoutSuccess,
 } from '../controllers/shop'
 
 import { isAuth } from '../middleware/isAuth'
@@ -29,7 +30,9 @@ router.post('/cart-delete-item', isAuth, deleteCartProduct)
 
 router.get('/orders', isAuth, getOrders)
 router.get('/orders/:orderId', isAuth, getInvoice)
-router.post('/create-order', isAuth, postOrder)
+// router.post('/create-order', isAuth, postOrder)
 router.get('/checkout', isAuth, getCheckoutPage)
+router.get('/checkout/success', isAuth, getCheckoutSuccess)
+router.get('/checkout/cancel', isAuth, getCheckoutPage)
 
 export default router

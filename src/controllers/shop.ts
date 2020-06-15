@@ -5,7 +5,12 @@ import rootDir from '../utils/rootDir'
 import path from 'path'
 import fs from 'fs'
 import PDFDocument from 'pdfkit'
-import order from '../models/order'
+import { STRIPE_SECRET_KEY } from '../utils/credentials'
+import stripeFn from 'stripe'
+
+const stripe = new stripeFn(STRIPE_SECRET_KEY, {
+	apiVersion: '2020-03-02',
+})
 
 const ITEMS_PER_PAGE = 2
 export const getIndexPage: RequestHandler = async (req, res, _next) => {
@@ -192,18 +197,63 @@ export const getInvoice: RequestHandler = async (req, res, next) => {
 }
 
 export const getCheckoutPage: RequestHandler = async (req, res, _next) => {
+	try {
+		const user = await req.user
+			.populate('cart.items.productId')
+			.execPopulate()
+		const cartProducts = user.cart.items
+
+		let total = 0
+		cartProducts.forEach((p: any) => {
+			total += p.quantity * p.productId.price
+		})
+
+		const stripeSession = await stripe.checkout.sessions.create({
+			payment_method_types: ['card'],
+			line_items: cartProducts.map((p: any) => {
+				return {
+					name: p.productId.title,
+					description: p.productId.description,
+					amount: p.productId.price * 100,
+					currency: 'usd',
+					quantity: p.quantity,
+				}
+			}),
+			success_url: `${req.protocol}://${req.get(
+				'host'
+			)}/checkout/success`,
+			cancel_url: `${req.protocol}://${req.get('host')}/checkout/cancel`,
+		})
+
+		res.render('shop/checkout', {
+			products: cartProducts,
+			path: '/checkout',
+			pageTitle: 'Checkout',
+			totalSum: total,
+			sessionId: stripeSession.id,
+		})
+	} catch (err) {
+		console.log(err)
+	}
+}
+
+export const getCheckoutSuccess: RequestHandler = async (req, res, _next) => {
 	const user = await req.user.populate('cart.items.productId').execPopulate()
-	const cartProducts = user.cart.items
+	const cartProducts = user.cart.items.map((i: any) => ({
+		quantity: i.quantity,
+		product: { ...i.productId._doc },
+	}))
 
-	let total = 0
-	cartProducts.forEach((p: any) => {
-		total += p.quantity * p.productId.price
-	})
+	const order = new Order({
+		user: {
+			email: req.user.email,
+			userId: req.user._id,
+		},
 
-	res.render('shop/checkout', {
 		products: cartProducts,
-		path: '/checkout',
-		pageTitle: 'Checkout',
-		totalSum: total,
 	})
+
+	await order.save()
+	await req.user.clearCart()
+	res.redirect('/orders')
 }
