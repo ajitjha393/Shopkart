@@ -15,6 +15,7 @@ import csrf from 'csurf'
 import flash from 'connect-flash'
 import multer from 'multer'
 import helmet from 'helmet'
+import compression from 'compression'
 const app = express()
 
 const MongoDBStore = cms(session)
@@ -37,6 +38,7 @@ const fileStorage = multer.diskStorage({
 	},
 })
 app.use(helmet())
+app.use(compression())
 
 app.use(
 	bodyParser.urlencoded({
