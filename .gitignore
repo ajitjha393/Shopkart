@@ -7,3 +7,5 @@ node_modules
 /images
 *.json
 access.log
+server.key
+server.cert

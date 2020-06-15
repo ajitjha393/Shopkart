@@ -18,6 +18,7 @@ import helmet from 'helmet'
 import compression from 'compression'
 import morgan from 'morgan'
 import fs from 'fs'
+import https from 'https'
 
 const app = express()
 
@@ -30,6 +31,9 @@ const store = new MongoDBStore({
 const csrfProtection = csrf()
 app.set('view engine', 'ejs')
 app.set('views', 'views')
+
+const privateKey = fs.readFileSync(path.join(rootDir, '..', 'server.key'))
+const certificate = fs.readFileSync(path.join(rootDir, '..', 'server.cert'))
 
 const fileStorage = multer.diskStorage({
 	destination: (_req, _file, cb) => {
@@ -137,7 +141,9 @@ app.use(
 		await connect(credentials)
 		console.clear()
 
-		app.listen(process.env.PORT || 3000)
+		https
+			.createServer({ key: privateKey, cert: certificate }, app)
+			.listen(process.env.PORT || 3000)
 		console.log('Connected.............')
 	} catch (err) {
 		console.log('Error while connecting to DB')
