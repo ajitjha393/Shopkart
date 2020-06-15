@@ -16,6 +16,9 @@ import flash from 'connect-flash'
 import multer from 'multer'
 import helmet from 'helmet'
 import compression from 'compression'
+import morgan from 'morgan'
+import fs from 'fs'
+
 const app = express()
 
 const MongoDBStore = cms(session)
@@ -37,9 +40,17 @@ const fileStorage = multer.diskStorage({
 		cb(null, new Date().toISOString() + '-' + file.originalname)
 	},
 })
+
+const accessLogStream = fs.createWriteStream(
+	path.join(rootDir, '..', 'access.log'),
+	{
+		flags: 'a',
+	}
+)
+
 app.use(helmet())
 app.use(compression())
-
+app.use(morgan('combined', { stream: accessLogStream }))
 app.use(
 	bodyParser.urlencoded({
 		extended: false,
